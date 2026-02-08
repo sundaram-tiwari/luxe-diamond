@@ -1,38 +1,48 @@
-const {z, email} = require('zod');
+const { z, email } = require('zod');
 
 const signupSchema = z.object({
     firstName: z
         .string()
-        .min(2,"Name must be atleast three characters")
+        .min(2, "Name must be atleast three characters")
         .max(30),
-    
+
     lastName: z
         .string()
-        .min(2,"Name must be atleast three characters")
+        .min(2, "Name must be atleast three characters")
         .max(30),
-    
+
     email: z
         .email("Invalid email address"),
 
     phone: z
         .string()
-        .min(10,"Phone must be atleast 10 digits")
+        .min(10, "Phone must be atleast 10 digits")
         .max(15)
         .optional(),
 
     password: z
         .string()
-        .min(6,"Password must be atleast 6 characters"),
-    
+        .min(6, "Password must be atleast 6 characters"),
+
     confirmPassword: z
         .string()
-        .min(6,"Password must be atleast 6 characters")
+        .min(6, "Password must be atleast 6 characters")
 })
-    .refine((data) => data.password === data.confirmPassword,{
-        message:"Password do not match",
-        path:["confirmPassword"]
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Password do not match",
+        path: ["confirmPassword"]
     });
 
+
+const signinSchema = z.object({
+    email: z
+        .email("Invalid email address"),
+    password: z
+        .string()
+        .min(6, "Password must be atleast 6 characters")
+})
+
 module.exports = {
-  signupSchema
+    signupSchema,
+    signinSchema
 };

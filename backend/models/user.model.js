@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
     }],
+    refreshToken: {
+        type: String,
+        select: false 
+    },
     emailVerificationToken: String,
     emailVerificationExpiry: Date,
 
@@ -56,4 +60,4 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpiry: Date,
 }, { timestamps: true });
 
-module.exports =  mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);
