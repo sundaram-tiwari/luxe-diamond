@@ -5,6 +5,7 @@ const User = require("../models/user.model");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { signupSchema, signinSchema } = require("../zod/auth.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
+const sendMail = require("../utils/sendEmail");
 
 const userSignup = asyncHandler(async (req, res) => {
 
@@ -22,6 +23,10 @@ const userSignup = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const verificationToken = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
 
   const user = await User.create({
     firstName,
@@ -29,13 +34,25 @@ const userSignup = asyncHandler(async (req, res) => {
     email,
     phone,
     password: hashedPassword,
-    emailVerificationToken: verificationToken,
+    emailVerificationToken: hashedToken,
     emailVerificationExpiry: Date.now() + 24 * 60 * 60 * 1000
+  });
+
+  const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+
+  await sendMail({
+    to: email,
+    subject: "Verify your email - Luxe Diamond",
+    template: "verifyEmail",
+    data: {
+      name: user.firstName,
+      verifyUrl
+    }
   });
 
   res.status(201).json({
     success: true,
-    message: "Signup successful. Please verify your email.",
+    message: "Signup successful. Verification email has been send. Please verify email.",
     data: {
       id: user._id,
       email: user.email
@@ -54,6 +71,13 @@ const userSigin = asyncHandler(async (req, res) => {
     return res.status(409).json({
       success: false,
       message: "User not found. Please signup"
+    });
+  }
+
+  if (!user.isEmailVerified) {
+    return res.status(403).json({
+      success: false,
+      message: "Please verify your email before signing in"
     });
   }
 
@@ -124,8 +148,34 @@ const userRefreshToken = asyncHandler(async (req, res) => {
   })
 });
 
+const verifyEmail = asyncHandler(async (req, res) => {
+  const { verificationToken } = req.params;
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationExpiry: { $gt: Date.now() }
+  });
+
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpiry = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Email verified successfully"
+  });
+});
+
 module.exports = {
   userSignup,
   userSigin,
-  userRefreshToken
+  userRefreshToken,
+  verifyEmail
 };
