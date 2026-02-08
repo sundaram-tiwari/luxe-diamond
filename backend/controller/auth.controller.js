@@ -3,7 +3,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken")
 const User = require("../models/user.model");
 const { asyncHandler } = require("../utils/asyncHandler");
-const { signupSchema, signinSchema } = require("../zod/auth.validation.schema");
+const { signupSchema, signinSchema, forgetPasswordSchema, resetPasswordSchema } = require("../zod/auth.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
 const sendMail = require("../utils/sendEmail");
 
@@ -116,7 +116,7 @@ const userSigin = asyncHandler(async (req, res) => {
 const userRefreshToken = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    return res.status(409).json({
+    return res.status(401).json({
       success: false,
       message: "Token is missing. Please Login"
     });
@@ -124,7 +124,7 @@ const userRefreshToken = asyncHandler(async (req, res) => {
 
   const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRETE);
 
-  const user = await user.findById(decoded.userId);
+  const user = await User.findById(decoded.userId).select("+refreshToken");;
   if (!user || !user.refreshToken) {
     return res.status(403).json({
       success: false,
@@ -161,6 +161,13 @@ const verifyEmail = asyncHandler(async (req, res) => {
     emailVerificationExpiry: { $gt: Date.now() }
   });
 
+  if (!user) {
+    return res.status(409).json({
+      success: false,
+      message: "Invalid token. User not found"
+    });
+  }
+
   user.isEmailVerified = true;
   user.emailVerificationToken = undefined;
   user.emailVerificationExpiry = undefined;
@@ -173,9 +180,85 @@ const verifyEmail = asyncHandler(async (req, res) => {
   });
 });
 
+const forgetPassword = asyncHandler(async (req, res) => {
+  const { email } = forgetPasswordSchema.parse(req.body);
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(409).json({
+      success: false,
+      message: "Email is not registered"
+    });
+  }
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const hashedResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  user.resetPasswordToken = hashedResetToken;
+  user.resetPasswordExpiry = Date.now() + 10 * 60 * 1000;
+  await user.save();
+
+  const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+
+  await sendMail({
+    to: email,
+    subject: "Reset your password - Luxe Diamond",
+    template: "resetPasswordEmail",
+    data: {
+      name: user.firstName,
+      resetPasswordUrl
+    }
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset link sent to your email"
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = resetPasswordSchema.parse(req.body);
+
+  const { resetPasswordToken } = req.params;
+
+  const hashedResetToken = crypto
+    .createHash("sha256")
+    .update(resetPasswordToken)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedResetToken,
+    resetPasswordExpiry: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return res.status(409).json({
+      success: false,
+      message: "Invalid token"
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpiry = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successfull. Please signin"
+  });
+});
+
 module.exports = {
   userSignup,
   userSigin,
   userRefreshToken,
-  verifyEmail
+  verifyEmail,
+  forgetPassword,
+  resetPassword
 };

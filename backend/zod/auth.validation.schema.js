@@ -40,9 +40,30 @@ const signinSchema = z.object({
     password: z
         .string()
         .min(6, "Password must be atleast 6 characters")
+});
+
+const forgetPasswordSchema = z.object({
+    email: z
+        .email("Invalid email address"),
+});
+
+const resetPasswordSchema = z.object({
+    password: z
+        .string()
+        .min(6, "Password must be atleast 6 characters"),
+    
+    confirmPassword: z
+        .string()
+        .min(6,"Password must be atleast 6 characters")
 })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Password do not match",
+        path: ["confirmPassword"]
+    });
 
 module.exports = {
     signupSchema,
-    signinSchema
+    signinSchema,
+    forgetPasswordSchema,
+    resetPasswordSchema
 };
