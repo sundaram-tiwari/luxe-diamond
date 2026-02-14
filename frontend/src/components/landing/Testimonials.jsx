@@ -1,26 +1,27 @@
-import { testimonials } from "../../data/landingData";
+import { testimonials } from "../../data/dummyData";
 
 const Testimonials = () => {
   return (
-    <section className="bg-black text-white py-20 px-6">
-      <h2 className="text-3xl font-medium text-center mb-12">
-        What Our Customers Say
-      </h2>
+    <section className="py-5 bg-light">
+      <div className="container">
+        <h2 className="section-title text-center mb-5">
+          Testimonials
+        </h2>
 
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
-        {testimonials.map((t) => (
-          <div
-            key={t.id}
-            className="border border-gray-700 p-6 rounded-lg"
-          >
-            <p className="text-gray-300 italic">
-              “{t.review}”
-            </p>
-            <h4 className="mt-4 text-gold font-medium">
-              — {t.name}
-            </h4>
-          </div>
-        ))}
+        <div className="row justify-content-center">
+          {testimonials.map((item) => (
+            <div key={item.id} className="col-md-6 mb-4">
+              <div className="p-4 border text-center bg-white">
+                <p className="mb-3">
+                  "{item.review}"
+                </p>
+                <h6 className="fw-bold mb-0">
+                  {item.name}
+                </h6>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

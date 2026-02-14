@@ -1,28 +1,32 @@
-import { products } from "../../data/landingData";
+import { products } from "../../data/dummyData";
 
 const NewArrivals = () => {
   return (
-    <section className="bg-gray-50 py-20 px-6">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-medium text-center mb-12">
+    <section className="py-5 bg-light">
+      <div className="container">
+        <h2 className="section-title text-center mb-5">
           New Arrivals
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {products.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-lg transition"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="h-64 w-full object-cover rounded"
-              />
-              <h3 className="mt-4 font-medium">{item.name}</h3>
-              <p className="text-gold font-semibold mt-1">
-                ₹{item.price}
-              </p>
+        <div className="row g-4">
+          {products.map((product) => (
+            <div key={product.id} className="col-md-4 col-6">
+              <div className="card border-0 text-center">
+                <img
+                  src={product.image}
+                  className="card-img-top"
+                  alt={product.name}
+                />
+                <div className="card-body">
+                  <h5>{product.name}</h5>
+                  <p className="fw-bold">
+                    ₹{product.price.toLocaleString()}
+                  </p>
+                  <button className="btn btn-outline-dark btn-sm">
+                    View Details
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
