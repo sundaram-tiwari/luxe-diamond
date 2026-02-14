@@ -1,8 +1,10 @@
 const AuthLayout = ({ children }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
-        {children}
+    <div className="login-wrapper d-flex align-items-center justify-content-center vh-100 bg-light text-dark">
+      <div className="container">
+        <div className="row justify-content-center">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import Landing from '../pages/Landing';
-import AuthLayout from '../components/layout/AuthLayout';
+import Login from '../pages/auth/Login';
+import Signup from '../pages/auth/Signup';
 
 const AppRoutes = () => {
     return (
@@ -16,11 +17,14 @@ const AppRoutes = () => {
                 } />
 
                 {/* Auth Routes */}
-                {/* <Route path='/signin' element={
-                    <AuthLayout>
-                        
-                    </AuthLayout>
-                } */}
+                <Route path='/login' element={
+                    <Login />
+                } />
+
+                <Route path='/signup' element={
+                    <Signup />
+                } />
+
             </Routes>
         </BrowserRouter>
     )

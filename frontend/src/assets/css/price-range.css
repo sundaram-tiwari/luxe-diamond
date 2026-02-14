@@ -1,0 +1,74 @@
+.ui-slider-horizontal {
+    margin-bottom: 15px;
+}
+
+.ui-widget-header {
+    background: #000000;
+}
+
+.price-range-field {
+    min-width: 50px;
+    background-color: #f9f9f9;
+    border: 1px solid #6e6666;
+    color: black;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.ui-widget.ui-widget-content {
+    background: #eee;
+    border: none;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button,
+html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+    border-radius: 50px;
+    border: none;
+    background: #000000;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+    height: 20px;
+    width: 20px;
+}
+
+.price-range-block-input input#max_price {
+    float: right;
+}.ui-slider-horizontal {
+    margin-bottom: 15px;
+}
+
+.ui-widget-header {
+    background: #000000;
+}
+
+.price-range-field {
+    min-width: 50px;
+    background-color: #f9f9f9;
+    border: 1px solid #6e6666;
+    color: black;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.ui-widget.ui-widget-content {
+    background: #eee;
+    border: none;
+    height: 8px;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button,
+html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+    border-radius: 50px;
+    border: none;
+    background: #000000;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+    height: 20px;
+    width: 20px;
+}
+
+.price-range-block-input input#max_price {
+    float: right;
+}

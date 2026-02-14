@@ -4,17 +4,16 @@ import HeroSection from "../components/landing/HeroSection";
 import NewArrivals from "../components/landing/NewArrivals";
 import Testimonials from "../components/landing/Testimonials";
 
-
 const Landing = () => {
-    return (
-        <>
-            <HeroSection/>
-            <Categories />
-            <NewArrivals />
-            <BestSellers />
-            <Testimonials />
-        </>
-    )
-}
+  return (
+    <>
+      <HeroSection />
+      <Categories />
+      <NewArrivals />
+      <BestSellers />
+      <Testimonials />
+    </>
+  );
+};
 
 export default Landing;
