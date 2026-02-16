@@ -2,17 +2,20 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import Loader from "../../components/common/Loader";
+import { signup } from "../../api/auth.api";
 
 const Signup = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -22,16 +25,20 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    // Simulated API call
-    setTimeout(() => {
-      console.log("Signup Data:", formData);
+    try {
+      const data = await signup(formData);
+      console.log("Signup Successfull :", data);
+      navigate("/email-verification-sent");
+    } catch (error) {
+      setError(error.response?.data?.message || "Something went wrong");
+    } finally {
       setLoading(false);
-      navigate("/login");
-    }, 1500);
+    }
   };
 
   return (
@@ -49,22 +56,38 @@ const Signup = () => {
             />
           </Link>
 
+          {error && <div className="alert alert-danger">{error}</div>}
+
           <div className="card p-4 shadow rounded-3 mt-5">
             <h3 className="mb-4 fw-bold">Sign Up</h3>
 
             <form onSubmit={handleSubmit}>
-              {/* Username */}
+              {/* First name */}
               <div className="form-floating ml-4 w-100 mb-3">
                 <input
                   type="text"
-                  name="username"
+                  name="firstName"
                   className="form-control bg-transparent"
-                  placeholder="Username"
-                  value={formData.username}
+                  placeholder="First Name"
+                  value={formData.firstName}
                   onChange={handleChange}
                   required
                 />
-                <label>Username</label>
+                <label>First Name</label>
+              </div>
+
+              {/* Last name */}
+              <div className="form-floating ml-4 w-100 mb-3">
+                <input
+                  type="text"
+                  name="lastName"
+                  className="form-control bg-transparent"
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+                <label>Last Name</label>
               </div>
 
               {/* Email */}
@@ -109,8 +132,12 @@ const Signup = () => {
                 <label>Confirm Password</label>
               </div>
 
-              <button type="submit" className="btn btn-dark w-100 py-2">
-                Sign Up
+              <button
+                type="submit"
+                className="btn btn-dark w-100 py-2"
+                disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Sign Up"}
               </button>
 
               <p className="mt-3 small">

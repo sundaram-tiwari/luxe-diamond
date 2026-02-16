@@ -2,11 +2,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import Loader from "../../components/common/Loader";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+
+  const location = useLocation();
+  const [showSuccess] = useState(
+    location.state?.verified || false,
+  );
 
   const [formData, setFormData] = useState({
     email: "",
@@ -38,7 +44,6 @@ const Login = () => {
 
       <AuthLayout>
         <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 text-center">
-
           {/* Logo */}
           <Link to="/" className="mb-3 d-block">
             <img
@@ -48,11 +53,16 @@ const Login = () => {
             />
           </Link>
 
+          {showSuccess && (
+            <div className="alert alert-success text-center">
+              🎉 Signup successful! Your email has been verified.
+            </div>
+          )}
+
           <div className="card p-4 shadow rounded-3 mt-3">
             <h3 className="mb-4 fw-bold">Login</h3>
 
             <form onSubmit={handleSubmit}>
-
               {/* Email */}
               <div className="form-floating mb-3">
                 <input
@@ -93,10 +103,8 @@ const Login = () => {
             </form>
 
             <p className="mt-3 small">
-              Don't have an account?{" "}
-              <Link to="/signup">Sign Up</Link>
+              Don't have an account? <Link to="/signup">Sign Up</Link>
             </p>
-
           </div>
         </div>
       </AuthLayout>

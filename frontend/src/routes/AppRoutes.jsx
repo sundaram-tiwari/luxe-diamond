@@ -3,6 +3,8 @@ import MainLayout from '../components/layout/MainLayout';
 import Landing from '../pages/Landing';
 import Login from '../pages/auth/Login';
 import Signup from '../pages/auth/Signup';
+import VerifyEmail from '../pages/auth/VerifyEmail';
+import EmailVerificationSent from '../pages/auth/EmailVerificationSent';
 
 const AppRoutes = () => {
     return (
@@ -23,6 +25,14 @@ const AppRoutes = () => {
 
                 <Route path='/signup' element={
                     <Signup />
+                } />
+
+                <Route path='/verify-email' element={
+                    <VerifyEmail />
+                } />
+
+                <Route path='/email-verification-sent' element={
+                    <EmailVerificationSent />
                 } />
 
             </Routes>
