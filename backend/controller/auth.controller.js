@@ -10,7 +10,7 @@ const sendMail = require("../utils/sendEmail");
 const userSignup = asyncHandler(async (req, res) => {
 
   const validatedData = signupSchema.parse(req.body);
-  const { firstName, lastName, email, phone, password } = validatedData;
+  const { firstName, lastName, email, password } = validatedData;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -32,7 +32,6 @@ const userSignup = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     email,
-    phone,
     password: hashedPassword,
     emailVerificationToken: hashedToken,
     emailVerificationExpiry: Date.now() + 24 * 60 * 60 * 1000
