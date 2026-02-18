@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [megaOpen] = useState(false);
+  const [megaOpen,setMegaOpen] = useState(false);
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
@@ -52,11 +52,9 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ================= TOP HEADER ================= */}
       <div className="header-top py-2 border-bottom">
         <div className="container-fluid">
           <div className="row align-items-center gy-2">
-            {/* Left */}
             <div className="col-lg-4 col-md-6">
               <ul className="d-flex align-items-center list-unstyled mb-0 gap-3 small">
                 <li>
@@ -94,7 +92,6 @@ const Header = () => {
               </ul>
             </div>
 
-            {/* Logo */}
             <div className="col-lg-4 text-center">
               <Link to="/">
                 <img
@@ -105,7 +102,6 @@ const Header = () => {
               </Link>
             </div>
 
-            {/* Right */}
             <div className="col-lg-4 col-md-6 text-end">
               <ul className="d-flex justify-content-end align-items-center list-unstyled mb-0 gap-4">
                 <li>
@@ -144,7 +140,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ================= NAVBAR ================= */}
       <nav className="navbar navbar-expand-lg bg-white">
         <div className="container-fluid">
           <button
@@ -161,11 +156,10 @@ const Header = () => {
             id="mainNavbar"
           >
             <ul className="navbar-nav gap-4">
-              {/* ===== MEGA MENU ===== */}
               <li
                 className="nav-item position-static"
-                // onMouseEnter={() => setMegaOpen(true)}
-                // onMouseLeave={() => setMegaOpen(false)}
+                onMouseEnter={() => setMegaOpen(true)}
+                onMouseLeave={() => setMegaOpen(false)}
               >
                 <button className="nav-link btn border-0">Rings</button>
 
@@ -238,7 +232,6 @@ const Header = () => {
                 )}
               </li>
 
-              {/* Other Nav Links */}
               <li className="nav-item">
                 <Link className="nav-link" to="/earrings">
                   Earrings

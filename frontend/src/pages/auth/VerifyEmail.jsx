@@ -9,7 +9,6 @@ const VerifyEmail = () => {
 
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("verifying");
-  // verifying | success | error
 
   useEffect(() => {
     const verify = async () => {
@@ -29,7 +28,6 @@ const VerifyEmail = () => {
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
       <div className="card p-5 shadow text-center" style={{ width: "420px" }}>
-        {/* Logo */}
         <img
           src="/assets/img/lux-diamond-vertical-logo.png"
           alt="Luxe Diamond"

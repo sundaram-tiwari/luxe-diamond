@@ -30,11 +30,10 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
     setTimeout(() => {
       setLoading(false);
       console.log("Signin Data:", formData);
-      navigate("/"); // redirect after login
+      navigate("/");
     }, 1500);
   };
 
@@ -44,7 +43,6 @@ const Login = () => {
 
       <AuthLayout>
         <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 text-center">
-          {/* Logo */}
           <Link to="/" className="mb-3 d-block">
             <img
               src="/assets/img/lux-diamond-vertical-logo.png"
@@ -63,7 +61,6 @@ const Login = () => {
             <h3 className="mb-4 fw-bold">Login</h3>
 
             <form onSubmit={handleSubmit}>
-              {/* Email */}
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -77,7 +74,6 @@ const Login = () => {
                 <label>Email address</label>
               </div>
 
-              {/* Password */}
               <div className="form-floating mb-3">
                 <input
                   type="password"

@@ -47,7 +47,6 @@ const Signup = () => {
 
       <AuthLayout>
         <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 text-center">
-          {/* Logo */}
           <Link to="/" className="d-block mb-4">
             <img
               src="/assets/img/lux-diamond-vertical-logo.png"
@@ -62,7 +61,6 @@ const Signup = () => {
             <h3 className="mb-4 fw-bold">Sign Up</h3>
 
             <form onSubmit={handleSubmit}>
-              {/* First name */}
               <div className="form-floating ml-4 w-100 mb-3">
                 <input
                   type="text"
@@ -76,7 +74,6 @@ const Signup = () => {
                 <label>First Name</label>
               </div>
 
-              {/* Last name */}
               <div className="form-floating ml-4 w-100 mb-3">
                 <input
                   type="text"
@@ -90,7 +87,6 @@ const Signup = () => {
                 <label>Last Name</label>
               </div>
 
-              {/* Email */}
               <div className="form-floating ml-4 w-100 mb-3">
                 <input
                   type="email"
@@ -104,7 +100,6 @@ const Signup = () => {
                 <label>Email address</label>
               </div>
 
-              {/* Password */}
               <div className="form-floating ml-4 w-100 mb-4">
                 <input
                   type="password"
@@ -118,7 +113,6 @@ const Signup = () => {
                 <label>Password</label>
               </div>
 
-              {/* Confirm Password */}
               <div className="form-floating ml-4 mb-3">
                 <input
                   type="password"

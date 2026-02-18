@@ -14,7 +14,6 @@ const Footer = () => {
   return (
     <footer>
 
-      {/* ================= NEWSLETTER ================= */}
       <div className="bg-light py-4 border-top">
         <div className="container">
           <div className="row justify-content-between align-items-center gy-3">
@@ -47,7 +46,6 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Social Icons */}
             <div className="col-auto">
               <div className="fs-4 d-flex gap-4">
                 <a href="#" className="text-dark">
@@ -72,12 +70,10 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* ================= MAIN FOOTER ================= */}
       <div className="main-footer py-5 bg-white">
         <div className="container">
           <div className="row gy-4">
 
-            {/* ABOUT */}
             <div className="col-sm-6 col-lg-3">
               <h6 className="mb-3 fw-bold">ABOUT US</h6>
               <ul className="list-unstyled footer-links">
@@ -96,7 +92,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* POLICIES */}
             <div className="col-sm-6 col-lg-3">
               <h6 className="mb-3 fw-bold">POLICIES</h6>
               <ul className="list-unstyled footer-links">
@@ -107,7 +102,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* CONFIDENCE */}
             <div className="col-sm-6 col-lg-3">
               <h6 className="mb-3 fw-bold">SHOP WITH CONFIDENCE</h6>
               <ul className="list-unstyled footer-links">
@@ -118,7 +112,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* GUIDE */}
             <div className="col-sm-6 col-lg-3">
               <h6 className="mb-3 fw-bold">JEWELLERY GUIDE</h6>
               <ul className="list-unstyled footer-links">
@@ -134,9 +127,8 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* ================= COPYRIGHT ================= */}
       <div className="text-center text-white bg-black py-3 small text-uppercase">
-        © {new Date().getFullYear()} Diamond Sutra. All Rights Reserved.
+        © {new Date().getFullYear()} Luxe Diamond. All Rights Reserved.
       </div>
 
     </footer>
