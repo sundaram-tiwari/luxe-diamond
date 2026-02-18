@@ -88,8 +88,11 @@ const userSigin = asyncHandler(async (req, res) => {
     });
   }
 
-  const jwtToken = generateAccessToken(user._id);
-  const jwtRefreshToken = generateRefreshToken(user._id);
+  const role = user.role;
+  const fname  =  user.firstName;
+
+  const jwtToken = generateAccessToken(user._id, role, fname);
+  const jwtRefreshToken = generateRefreshToken(user._id, role, fname);
 
   user.refreshToken = await bcrypt.hash(jwtRefreshToken, 10);
   await user.save();

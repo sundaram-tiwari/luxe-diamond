@@ -2,16 +2,15 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
 
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true
+  },
+
+  subCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"SubCategory",
   },
 
   productSku: {
@@ -22,7 +21,13 @@ const productSchema = new mongoose.Schema({
     uppercase: true
   },
 
-  description: {  
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+
+  description: {
     type: String,
     required: true,
     trim: true
@@ -36,112 +41,142 @@ const productSchema = new mongoose.Schema({
     trim: true
   },
 
-  images: {
-    type: [String],
-    default: []
+  dimension: {
+    height: {
+      type: Number,
+    },
+    width: {
+      type: Number
+    }
   },
 
-  videoUrl: {
-    type: String
-  },
-
-  metalColor: {
+  material: {
     type: String,
-    enum: ["Yellow", "Rose", "White"],
-    default: "Yellow"
+    default: Gold
   },
 
-  metalPurity: {
+  diamond: {
+    carat: {
+      type: Number
+    },
+    quantity: {
+      type: Number
+    },
+    shape: {
+      type: String
+    }
+  },
+
+  stone: {
+    carat: {
+      type: Number
+    },
+    quantity: {
+      type: Number
+    },
+    shape: {
+      type: Number
+    },
+    price: {
+      type: Number
+    },
+    color: {
+      type: String
+    },
+    type: {
+      type: String
+    },
+  },
+
+  goldWeight22k: {
+    type: Number
+  },
+
+  goldWeight18k: {
+    type: Number
+  },
+
+  goldWeight14k: {
+    type: Number
+  },
+
+  quantity: {
+    type: Number,
+    default: 1,
+    min: 0
+  },
+
+  color: [],
+
+  video: {
     type: String,
-    required: true
+    enum: ["yellow", "white", "rose"]
   },
 
-  metalWeight: {
+  defaultColor: {
+    type: String,
+  },
+
+  defaultVideo: {
+    type: String,
+  },
+
+  // images: {
+  //   type: [String],
+  //   default: [],
+  //   required: true
+  // },
+
+  // videoUrl: {
+  //   type: String
+  // },
+
+  isRecommended: {
+    type: Boolean,
+    default: true
+  },
+
+  isMostSelling: {
+    type: Boolean,
+    default: true
+  },
+
+  productBasePrice: {
     type: Number,
     required: true,
     min: 0
   },
 
-  diamondQuality: {
-    type: String,
-    enum: ["IJ-SI","GH-SI","GH-VS","EF-VVS"]
-  },
-
-  makingCharge: {
+  productBuyPrice: {
     type: Number,
     required: true,
     min: 0
   },
 
-  discountPercent: {
+  discount: {
     type: Number,
     default: 0,
     min: 0,
     max: 100
   },
 
-  basePrice: {
-    type: Number,
-    required: true,
-    min: 0
+  status: {
+    type: Boolean,
+    default: true
   },
 
-  finalPrice: {
-    type: Number,
-    min: 0
+  totalReviews:{
+    type: Number
   },
 
-  stock: {
-    type: Number,
-    default: 1,
-    min: 0
-  },
-
-  ratingsAverage: {
+  averageRating: {
     type: Number,
     default: 0,
     min: 0,
     max: 5
   },
 
-  ratingsCount: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-
-  isRecommended: {
-    type: Boolean,
-    default: false
-  },
-
-  isBestSelling: {  
-    type: Boolean,
-    default: false
-  },
-
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-
 }, { timestamps: true });
 
-productSchema.pre("save", function(next) {
-  this.finalPrice =
-    this.basePrice - (this.basePrice * this.discountPercent) / 100;
-  next();
-});
 
-productSchema.index({
-  name: "text",
-  description: "text"
-});
-
-
-productSchema.index({ slug: 1 });
-productSchema.index({ productSku: 1 });
-productSchema.index({ category: 1 });
-productSchema.index({ isActive: 1 });
-
-export default mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Product", productSchema);
