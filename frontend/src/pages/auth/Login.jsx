@@ -2,17 +2,18 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import Loader from "../../components/common/Loader";
-import { useLocation } from "react-router-dom";
+import { login } from "../../api/auth.api";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const location = useLocation();
-  const [showSuccess] = useState(
-    location.state?.verified || false,
-  );
+  // const location = useLocation();
+  // const [showSuccess] = useState(
+  //   location.state?.verified || false,
+  // );
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,15 +27,25 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Signin Data:", formData);
+    try {
+      const response = await login(formData);
+      JSON.stringify(response);
+      let token = response.data.token;
+      localStorage.setItem("token",token);
+      console.log("Login successfull");
       navigate("/");
-    }, 1500);
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Something went wrong in login",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,12 +62,13 @@ const Login = () => {
             />
           </Link>
 
-          {showSuccess && (
+          {/* {showSuccess && (
             <div className="alert alert-success text-center">
               🎉 Signup successful! Your email has been verified.
             </div>
-          )}
+          )} */}
 
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="card p-4 shadow rounded-3 mt-3">
             <h3 className="mb-4 fw-bold">Login</h3>
 

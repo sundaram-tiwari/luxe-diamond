@@ -31,10 +31,12 @@ const Signup = () => {
     setError("");
 
     try {
-      const data = await signup(formData);
-      console.log("Signup Successfull :", data);
+      const response = await signup(formData);
+      JSON.stringify(response);
+      localStorage.setItem("email",response.data.data.email);
       navigate("/email-verification-sent");
     } catch (error) {
+      console.log(error);
       setError(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
