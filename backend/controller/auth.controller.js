@@ -6,6 +6,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { signupSchema, signinSchema, forgetPasswordSchema, resetPasswordSchema } = require("../zod/auth.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
 const sendMail = require("../utils/sendEmail");
+const { success } = require("zod");
 
 const userSignup = asyncHandler(async (req, res) => {
 
@@ -34,10 +35,10 @@ const userSignup = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     emailVerificationToken: hashedToken,
-    emailVerificationExpiry: Date.now() + 24 * 60 * 60 * 1000
+    emailVerificationExpiry: Date.now() + 10 * 60 * 1000
   });
 
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+  const verifyUrl = `${process.env.CLIENT_URL}verify-email?token=${verificationToken}`;
 
   await sendMail({
     to: email,
@@ -58,7 +59,6 @@ const userSignup = asyncHandler(async (req, res) => {
     }
   });
 });
-
 
 const userSigin = asyncHandler(async (req, res) => {
   const validatedData = signinSchema.parse(req.body);
@@ -107,13 +107,10 @@ const userSigin = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Signin successfull",
-    tokens: [{
-      jwtToken,
-    }]
+    token:jwtToken
   });
 
 });
-
 
 const userRefreshToken = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
@@ -151,11 +148,11 @@ const userRefreshToken = asyncHandler(async (req, res) => {
 });
 
 const verifyEmail = asyncHandler(async (req, res) => {
-  const { verificationToken } = req.params;
+  const { token } = req.params;
 
   const hashedToken = crypto
     .createHash("sha256")
-    .update(verificationToken)
+    .update(token)
     .digest("hex");
 
   const user = await User.findOne({
@@ -178,9 +175,55 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Email verified successfully"
+    message: "Email verified successfully",
+    isVerified: true
   });
 });
+
+const resendVerificationEmail = asyncHandler(async (req,res) => {
+  const email = req.body.email;
+  if(!email){
+    return res.status(404).json({
+      success: false,
+      message: "Please provide the email"
+    })
+  }
+
+  const user = await User.findOne({email});
+  if(!user){
+     return res.status(404).json({
+      success: false,
+      message: "User is not registered"
+    })
+  }
+
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+
+    user.emailVerificationToken = hashedToken;
+    user.emailVerificationExpiry = Date.now() + 10 * 60 * 1000
+    await user.save();
+
+  const verifyUrl = `${process.env.CLIENT_URL}verify-emaill?token=${verificationToken}`;
+
+  await sendMail({
+    to: email,
+    subject: "Verify your email - Luxe Diamond",
+    template: "verifyEmail",
+    data: {
+      name: user.firstName,
+      verifyUrl
+    }
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Email verfication link has been send. Please verify your email !"
+  })
+})
 
 const forgetPassword = asyncHandler(async (req, res) => {
   const { email } = forgetPasswordSchema.parse(req.body);
@@ -261,6 +304,7 @@ module.exports = {
   userSigin,
   userRefreshToken,
   verifyEmail,
+  resendVerificationEmail,
   forgetPassword,
   resetPassword
 };
