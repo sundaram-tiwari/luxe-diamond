@@ -19,10 +19,22 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const response = await verifyEmail(token);
-        JSON.stringify(response);
+        const email = localStorage.getItem("email");
+        console.log(email);
+        if (!email) return;
+
+        const response = await verifyEmail(token, { email });
+        if (response.data.emailVerified) {
+          setTimeout(() => {
+            if (!localStorage.getItem("token")) {
+              navigate("/login");
+            }
+            navigate("/");
+          }, 4000);
+        }
+        // JSON.stringify(response);
         setStatus("success");
-        localStorage.setItem("isVerified", response.isVerified);
+        // localStorage.setItem("isVerified", response.isVerified);
       } catch (err) {
         setStatus("error");
         setError(
@@ -47,15 +59,15 @@ const VerifyEmail = () => {
       const data = {
         email: localStorage.getItem("email"),
       };
-      const isVerified = localStorage.getItem('isVerified');
-      if(isVerified){
-        navigate('/login');
+      const isVerified = localStorage.getItem("isVerified");
+      if (isVerified) {
+        navigate("/login");
       }
       setResendLoading(true);
       setResendMessage("");
 
       await resendEmail(data);
-      setResendMessage("✅ New verification email sent. Please check inbox.");
+      setResendMessage("New verification email sent. Please check inbox.");
     } catch (error) {
       setResendMessage(error.data?.message || "Failed to resend email.");
     } finally {
@@ -76,14 +88,20 @@ const VerifyEmail = () => {
 
         {!loading && status === "success" && (
           <>
-            <h3 className="mb-3">✨ Welcome to Luxe Diamond</h3>
+            <h3 className="mb-3"> Welcome to Luxe Diamond</h3>
             <p>Your email has been successfully verified.</p>
 
             <button
               className="btn btn-dark mt-3"
-              onClick={() => navigate("/login", { state: { verified: true } })}
+              onClick={() => {
+                localStorage.getItem("token") != null
+                  ? navigate("/", { state: { verified: true } })
+                  : navigate("/login", { state: { verified: true } });
+              }}
             >
-              Go to Login
+              {localStorage.getItem("token") != null
+                ? "Explore"
+                : "Go to Login"}
             </button>
           </>
         )}
@@ -93,7 +111,6 @@ const VerifyEmail = () => {
             <h3 className="text-danger mb-3">Verification Failed</h3>
             <p>{error}</p>
 
-            {/* 🔥 RESEND EMAIL SECTION */}
             <div className="mt-3 border-top pt-3">
               <p className="text-muted small mb-2">
                 Didn't receive the email or link expired?

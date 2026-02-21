@@ -10,11 +10,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // const location = useLocation();
-  // const [showSuccess] = useState(
-  //   location.state?.verified || false,
-  // );
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -34,11 +29,19 @@ const Login = () => {
 
     try {
       const response = await login(formData);
+      localStorage.setItem("email", formData.email);
       JSON.stringify(response);
       let token = response.data.token;
-      localStorage.setItem("token",token);
-      console.log("Login successfull");
-      navigate("/");
+      localStorage.setItem("token", token);
+      console.log("response log", response.data);
+      if (response.data.emailVerified) {
+        navigate("/");
+      } else {
+        alert(
+          "Login Successfull. Your email is not verified. Please verify your email",
+        );
+        navigate("/email-verification-sent");
+      }
     } catch (error) {
       setError(
         error.response?.data?.message || "Something went wrong in login",

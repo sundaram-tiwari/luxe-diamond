@@ -1,24 +1,62 @@
 import { useState } from "react";
-import { resendEmail } from "../../api/auth.api";
+import { checkEmailVerificationStatus, resendEmail } from "../../api/auth.api";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const EmailVerificationSent = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const checkEmailStatus = async () => {
+      try {
+        const email = localStorage.getItem("email");
+        if (!email) return;
+
+        const response = await checkEmailVerificationStatus({ email });
+
+        if (response.data.emailVerified) {
+          alert(`Email has been verified`);
+          if(localStorage.getItem("token")){
+            navigate("/");
+          } else {
+            navigate('/login');
+          }
+        }
+      } catch (error) {
+        setResendMessage(
+          error.response?.data?.message || "Failed to check email status.",
+        );
+      }
+    };
+
+    checkEmailStatus();
+  }, []);
 
   const handleResendEmail = async () => {
     try {
-      const data = {
-        email: localStorage.getItem("email"),
-      };
+      const email = localStorage.getItem("email");
+
       setResendLoading(true);
       setResendMessage("");
 
-      console.log(localStorage.getItem("email"));
+      const response = await resendEmail({ email });
 
-      await resendEmail(data);
-      setResendMessage("✅ New verification email sent. Please check inbox.");
+      console.log("RESEND RESPONSE:", response.data);
+
+      if (response.data.data.emailVerified) {
+        alert("Email has already been verified");
+        navigate("/login");
+        return;
+      }
+
+      setResendMessage("New verification email sent. Please check inbox.");
     } catch (error) {
-      setResendMessage(error.data?.message || "Failed to resend email.");
+      setResendMessage(
+        error.response?.data?.message || "Failed to resend email.",
+      );
     } finally {
       setResendLoading(false);
     }
@@ -34,7 +72,7 @@ const EmailVerificationSent = () => {
           className="mb-4 mx-auto"
         />
 
-        <h3 className="mb-3">📩 Check Your Email</h3>
+        <h3 className="mb-3"> Check Your Email</h3>
 
         <p>
           A verification link has been sent to your email address. Please verify

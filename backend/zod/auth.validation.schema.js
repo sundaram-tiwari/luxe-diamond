@@ -1,4 +1,4 @@
-const { z, email } = require('zod');
+const { z } = require('zod');
 
 const signupSchema = z.object({
     firstName: z
@@ -30,10 +30,23 @@ const signupSchema = z.object({
 
 const signinSchema = z.object({
     email: z
+        .string()
         .email("Invalid email address"),
     password: z
         .string()
         .min(6, "Password must be atleast 6 characters")
+});
+
+const resendVerificationEmailSchema = z.object({
+    email: z
+        .string()
+        .email("Invalid email address"),
+});
+
+const checkEmailVerificationStatusSchema = z.object({
+    email: z
+        .string()
+        .email("Invalid email address"),
 });
 
 const forgetPasswordSchema = z.object({
@@ -58,6 +71,8 @@ const resetPasswordSchema = z.object({
 module.exports = {
     signupSchema,
     signinSchema,
+    resendVerificationEmailSchema,
+    checkEmailVerificationStatusSchema,
     forgetPasswordSchema,
     resetPasswordSchema
 };

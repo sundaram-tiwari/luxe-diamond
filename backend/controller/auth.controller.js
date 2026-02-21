@@ -3,10 +3,12 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken")
 const User = require("../models/user.model");
 const { asyncHandler } = require("../utils/asyncHandler");
-const { signupSchema, signinSchema, forgetPasswordSchema, resetPasswordSchema } = require("../zod/auth.validation.schema");
+const { signupSchema, signinSchema, forgetPasswordSchema, resetPasswordSchema, resendVerificationEmailSchema, checkEmailVerificationStatusSchema } = require("../zod/auth.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
 const sendMail = require("../utils/sendEmail");
+const { isEmailVerified } = require("../utils/emailHandler");
 const { success } = require("zod");
+
 
 const userSignup = asyncHandler(async (req, res) => {
 
@@ -73,13 +75,6 @@ const userSigin = asyncHandler(async (req, res) => {
     });
   }
 
-  if (!user.isEmailVerified) {
-    return res.status(403).json({
-      success: false,
-      message: "Please verify your email before signing in"
-    });
-  }
-
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(404).send({
@@ -89,7 +84,7 @@ const userSigin = asyncHandler(async (req, res) => {
   }
 
   const role = user.role;
-  const fname  =  user.firstName;
+  const fname = user.firstName;
 
   const jwtToken = generateAccessToken(user._id, role, fname);
   const jwtRefreshToken = generateRefreshToken(user._id, role, fname);
@@ -107,7 +102,10 @@ const userSigin = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Signin successfull",
-    token:jwtToken
+    data: {
+      emailVerified: user.isEmailVerified,
+      token: jwtToken
+    }
   });
 
 });
@@ -144,11 +142,29 @@ const userRefreshToken = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     accessToken: newAccessToken
+    ,
+    data: null
   })
 });
 
 const verifyEmail = asyncHandler(async (req, res) => {
   const { token } = req.params;
+  const email = req.body.email;
+
+  if (email) {
+    const user = await User.findOne({ email });
+    if (user) {
+      if (user.isEmailVerified) {
+        return res.status(200).json({
+          success: true,
+          message: "Email already verified successfully",
+          data: {
+            emailVerified: true
+          }
+        });
+      }
+    }
+  }
 
   const hashedToken = crypto
     .createHash("sha256")
@@ -168,30 +184,38 @@ const verifyEmail = asyncHandler(async (req, res) => {
   }
 
   user.isEmailVerified = true;
-  user.emailVerificationToken = undefined;
-  user.emailVerificationExpiry = undefined;
+  user.emailVerificationToken = null;
+  user.emailVerificationExpiry = null;
 
   await user.save();
 
   res.status(200).json({
     success: true,
     message: "Email verified successfully",
-    isVerified: true
+    data: {
+      emailVerified: true
+    }
   });
 });
 
-const resendVerificationEmail = asyncHandler(async (req,res) => {
-  const email = req.body.email;
-  if(!email){
-    return res.status(404).json({
-      success: false,
-      message: "Please provide the email"
+const resendVerificationEmail = asyncHandler(async (req, res) => {
+  const validatedData = resendVerificationEmailSchema.parse(req.body);
+  const { email } = validatedData;
+
+  const emailVerified = await isEmailVerified(email);
+  if (emailVerified) {
+    return res.status(200).json({
+      success: true,
+      message: "Email is already verified",
+      data: {
+        emailVerified
+      }
     })
   }
 
-  const user = await User.findOne({email});
-  if(!user){
-     return res.status(404).json({
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({
       success: false,
       message: "User is not registered"
     })
@@ -203,11 +227,11 @@ const resendVerificationEmail = asyncHandler(async (req,res) => {
     .update(verificationToken)
     .digest("hex");
 
-    user.emailVerificationToken = hashedToken;
-    user.emailVerificationExpiry = Date.now() + 10 * 60 * 1000
-    await user.save();
+  user.emailVerificationToken = hashedToken;
+  user.emailVerificationExpiry = Date.now() + 10 * 60 * 1000
+  await user.save();
 
-  const verifyUrl = `${process.env.CLIENT_URL}verify-emaill?token=${verificationToken}`;
+  const verifyUrl = `${process.env.CLIENT_URL}verify-email?token=${verificationToken}`;
 
   await sendMail({
     to: email,
@@ -222,6 +246,29 @@ const resendVerificationEmail = asyncHandler(async (req,res) => {
   res.status(200).json({
     success: true,
     message: "Email verfication link has been send. Please verify your email !"
+    ,
+    data: null
+  })
+})
+
+const checkEmailVerificationStatus = asyncHandler(async (req, res) => {
+  const validatedData = checkEmailVerificationStatusSchema.parse(req.body);
+  const { email } = validatedData;
+
+  const emailVerified = await isEmailVerified(email);
+  if (emailVerified) {
+    return res.status(200).json({
+      success: true,
+      message: "Email has been verified",
+      data: {
+        emailVerified
+      }
+    })
+
+  }
+  res.status(401).json({
+    success: false,
+    message: "Email is not verified",
   })
 })
 
@@ -246,7 +293,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
   user.resetPasswordExpiry = Date.now() + 10 * 60 * 1000;
   await user.save();
 
-  const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+  const resetPasswordUrl = `${process.env.CLIENT_URL}reset-password?token=${resetToken}`
 
   await sendMail({
     to: email,
@@ -260,7 +307,8 @@ const forgetPassword = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Password reset link sent to your email"
+    message: "Password reset link sent to your email",
+    data: null
   });
 });
 
@@ -295,7 +343,8 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: "Password reset successfull. Please signin"
+    message: "Password reset successfull. Please signin",
+    data: null
   });
 });
 
@@ -305,6 +354,7 @@ module.exports = {
   userRefreshToken,
   verifyEmail,
   resendVerificationEmail,
+  checkEmailVerificationStatus,
   forgetPassword,
   resetPassword
 };
