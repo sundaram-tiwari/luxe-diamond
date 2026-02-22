@@ -63,7 +63,7 @@ const EmailVerificationSent = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div className=" login-wrapper d-flex align-items-center justify-content-center vh-100 bg-light">
       <div className="card p-5 shadow text-center" style={{ width: "420px" }}>
         <img
           src="/assets/img/lux-diamond-vertical-logo.png"

@@ -7,8 +7,6 @@ const { signupSchema, signinSchema, forgetPasswordSchema, resetPasswordSchema, r
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
 const sendMail = require("../utils/sendEmail");
 const { isEmailVerified } = require("../utils/emailHandler");
-const { success } = require("zod");
-
 
 const userSignup = asyncHandler(async (req, res) => {
 
@@ -75,8 +73,8 @@ const userSigin = asyncHandler(async (req, res) => {
     });
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
     return res.status(404).send({
       success: false,
       message: 'Incorrect Password'

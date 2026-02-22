@@ -20,10 +20,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use('/api/v1/auth',require('./routes/auth.routes'));
-
-app.get('/',(req,res) => {
-    res.send("Hi there! Testing");
-});
+app.use('/api/v1/admin',require('./routes/admin.routes'));
 
 app.use((req, res) => {
   res.status(404).json({
