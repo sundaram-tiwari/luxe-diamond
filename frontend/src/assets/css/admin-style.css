@@ -384,7 +384,7 @@ html {
 .form-select {
   padding: 15px;
   border-radius: 10px;
-  background: var(--bs-gray-600);
+  background: transparent;
   border-color: rgba(0, 0, 0, 0.2);
   color: var(--bs-dark);
 }
@@ -584,4 +584,14 @@ option {
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+.upload-card {
+  border: 2px dashed #ddd;
+  transition: all 0.3s ease;
+}
+
+.upload-card:hover {
+  border-color: #000;
+  background-color: #f8f9fa;
 }

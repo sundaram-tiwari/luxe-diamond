@@ -1,6 +1,7 @@
 const csv = require('csvtojson');
 const subCategory = require('../models/subCategory.model');
 const { connectDatabase } = require('../config/dbConnect');
+const mongoose = require("mongoose");
 
 require('dotenv').config();
 
@@ -29,16 +30,24 @@ const inportSubCategory = async () => {
         }).fromFile(CSV_FILE_PATH);
 
         const formatedSubCategory = rows.map(row => {
-            const oldCategroyId = row.categoryId;
+            const oldCategroyId = parseInt(row.categoryId);
 
+            const mappedCategoryId = categoriesMap[oldCategroyId];
+
+            if (!mappedCategoryId) {
+                console.log("Invalid categoryId:", oldCategroyId);
+                return null;
+            }
             return {
                 name: row.name,
-                category: categoriesMap[oldCategroyId],
-            }
-        })
+                categoryId: new mongoose.Types.ObjectId(mappedCategoryId),
+            };
+        }).filter(Boolean);
 
-        await subCategory.insertMany(formatedSubCategory,{ordered: false});
+        await subCategory.insertMany(formatedSubCategory, { ordered: false });
         console.log("Sub categories inserted.");
+        const data = await subCategory.find();
+        console.log(data);
         process.exit();
 
     } catch (error) {

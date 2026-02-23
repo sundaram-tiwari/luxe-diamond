@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
 
@@ -52,7 +52,7 @@ const productSchema = new mongoose.Schema({
 
   material: {
     type: String,
-    default: Gold
+    default: "Gold"
   },
 
   diamond: {

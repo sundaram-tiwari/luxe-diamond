@@ -30,11 +30,11 @@ const importCategories = async () => {
 
         await Category.insertMany(categories, { ordered: false });
 
-        console.log(`🎉 Successfully Imported ${categories.length} Categories`);
+        console.log(`Successfully Imported ${categories.length} Categories`);
         process.exit();
 
     } catch (error) {
-        console.error("❌ Import Failed:", error);
+        console.error("Import Failed:", error);
         process.exit(1);
     }
 };
