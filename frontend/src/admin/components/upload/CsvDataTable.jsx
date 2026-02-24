@@ -1,16 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllProducts } from "../../../api/product.api";
 
-export default function CsvDataTable({ data }) {
+export default function CsvDataTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const [products, setProducts] = useState([]);
+  const rowsPerPage = 10;
 
-  const hasData = data && data.length > 0;
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await getAllProducts();
+        setProducts(res?.data?.products || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const totalPages = Math.ceil(products.length / rowsPerPage);
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = products.slice(indexOfFirstRow, indexOfLastRow);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -22,31 +34,45 @@ export default function CsvDataTable({ data }) {
         <table className="table text-dark fs-14">
           <thead className="table-dark">
             <tr>
-              <th scope="col">Sr No</th>
-              <th scope="col">Name</th>
-              <th scope="col">Active</th>
-              <th scope="col">CreatedAt</th>
-              <th scope="col">UpdatedAt</th>
+              <th>Sr No</th>
+              <th>Product SKU</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Material</th>
+              <th>Gold 18k</th>
+              <th>Gold 14k</th>
+              <th>Making Charges</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {hasData ? (
+            {products.length > 0 ? (
               currentRows.map((row, index) => (
                 <tr key={index}>
-                  <th scope="row">{indexOfFirstRow + index + 1}</th>
+                  <th>{indexOfFirstRow + index + 1}</th>
+                  <td>{row.productSku || "-"}</td>
                   <td>{row.name || "-"}</td>
+                  <td>{row.category.name || "-"}</td>
+                  <td>{row.material || "-"}</td>
+                  <td>{row.goldWeight18k || "-"}</td>
+                  <td>{row.goldWeight14k || "-"}</td>
+                  <td>{row.makingCharges || "-"}</td>
+                  <td>{row.quantity || "-"}</td>
                   <td>{row.active ? "Yes" : "No"}</td>
-                  <td>{row.createdAt || "-"}</td>
-                  <td>{row.updatedAt || "-"}</td>
+                  <td>
+                    <button
+                      className="cursor-pointer fa-solid fa-trash bg-transparent border-0"
+                    >
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  className="text-center text-uppercase fw-bold text-dark"
-                  colSpan="5"
-                >
+                <td className="text-center fw-bold" colSpan="5">
                   no data found
                 </td>
               </tr>
@@ -55,14 +81,13 @@ export default function CsvDataTable({ data }) {
         </table>
       </div>
 
-      {hasData && totalPages > 1 && (
-        <nav aria-label="...">
+      {products.length > 0 && totalPages > 1 && (
+        <nav>
           <ul className="pagination">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
               >
                 Previous
               </button>
@@ -70,7 +95,10 @@ export default function CsvDataTable({ data }) {
 
             {[...Array(totalPages)].map((_, index) => (
               <li
-                className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                key={index}
+                className={`page-item ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
               >
                 <button
                   className={`page-link ${
@@ -93,7 +121,6 @@ export default function CsvDataTable({ data }) {
               <button
                 className="page-link"
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
               >
                 Next
               </button>

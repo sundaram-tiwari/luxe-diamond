@@ -2,26 +2,23 @@ const csv = require("csvtojson");
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const Product = require("../models/product.model");
-const { connectDatabase } = require("../config/dbConnect");
 
 require("dotenv").config();
 
-const CSV_FILE_PATH = "./data/csv/products.csv";
 
-const importProducts = async () => {
+const importProducts = async (filePath) => {
+    const CSV_FILE_PATH = filePath;
     try {
-        await connectDatabase();
-
         await Product.deleteMany();
         console.log("Old products deleted.");
 
         const categoriesMap = {
-            1: "699564356c79459a04d32f26",
-            2: "699564356c79459a04d32f27",
-            3: "699564356c79459a04d32f28",
-            4: "699564356c79459a04d32f29",
-            5: "699564356c79459a04d32f2a",
-            6: "699564356c79459a04d32f2b",
+            1: "699ca373a2277a2bf208eda3",
+            2: "699ca373a2277a2bf208eda4",
+            3: "699ca373a2277a2bf208eda5",
+            4: "699ca373a2277a2bf208eda6",
+            5: "699ca373a2277a2bf208eda7",
+            6: "699ca373a2277a2bf208eda8",
         };
 
         const subCategoriesMap = {
@@ -93,6 +90,8 @@ const importProducts = async () => {
                 goldWeight22k: Number(row.gold_weight_22k) || 0,
                 goldWeight18k: Number(row.gold_weight_18k) || 0,
                 goldWeight14k: Number(row.gold_weight_14k) || 0,
+                
+                makingCharges: Number(row.making_charges),
 
                 quantity: Number(row.quantity) || 1,
 
@@ -116,15 +115,12 @@ const importProducts = async () => {
             };
         }).filter(Boolean);
 
-        await Product.insertMany(formattedData, { ordered: false });
-
-        console.log("Products inserted successfully.");
-        process.exit();
+        const products = await Product.insertMany(formattedData, { ordered: false });
+        return products;
 
     } catch (error) {
-        console.error("Import Failed:", error);
-        process.exit(1);
+        console.error("Failed insertion :", error.productSku);
     }
 };
 
-importProducts();
+module.exports = {importProducts}

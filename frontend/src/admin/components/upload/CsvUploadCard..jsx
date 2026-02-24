@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { uploadProducts } from "../../../api/product.api";
 
-export default function CsvUploadCard({ setData }) {
+export default function CsvUploadCard() {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -19,12 +19,7 @@ export default function CsvUploadCard({ setData }) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await uploadProducts(formData);
-      console.log(response);
-
-      if (response) {
-        setData(response.data || response);
-      }
+      await uploadProducts(formData);
 
       alert("File uploaded successfully");
 
@@ -78,7 +73,6 @@ export default function CsvUploadCard({ setData }) {
               Submit
             </button>
           </div>
-
         </div>
       </div>
     </div>

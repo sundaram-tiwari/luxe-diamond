@@ -46,7 +46,7 @@ const EmailVerificationSent = () => {
 
       console.log("RESEND RESPONSE:", response.data);
 
-      if (response.data.data.emailVerified) {
+      if (response.data.emailVerified) {
         alert("Email has already been verified");
         navigate("/login");
         return;

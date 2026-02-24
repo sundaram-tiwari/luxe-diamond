@@ -100,6 +100,10 @@ const productSchema = new mongoose.Schema({
     type: Number
   },
 
+  makingCharges: {
+    type: Number
+  },
+
   quantity: {
     type: Number,
     default: 1,

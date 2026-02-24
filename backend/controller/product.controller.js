@@ -1,7 +1,7 @@
 const { asyncHandler } = require('../utils/asyncHandler');
 const Product = require('../models/product.model');
-const fs = require("fs");
-const csv = require("csv-parser");
+const Category = require('../models/category.model');
+const { importProducts } = require('../utils/importProductHandler');
 
 const uploadProducts = asyncHandler(async (req, res) => {
     if (!req.file) {
@@ -11,32 +11,44 @@ const uploadProducts = asyncHandler(async (req, res) => {
         });
     }
 
-    const results = [];
-    const filePath = req.file.path;
+    const products = importProducts(req.file.path);
 
-    fs.createReadStream(filePath)
-        .pipe(csv())
-        .on("data", (data) => {
-            results.push(data);
-            console.log(data)
-        })
-        .on("end", async () => {
-            try {
-                await Product.insertMany(results);
-
-                return res.status(200).json({
-                    success: true,
-                    message: "Products uploaded successfully",
-                    count: results.length,
-                });
-            } catch (error) {
-                return res.status(500).json({
-                    success: false,
-                    message: "Database insertion failed",
-                    error: error.message,
-                });
-            }
+    if (!products) {
+        return res.status(400).json({
+            success: false,
+            message: "Product insertion failed",
         });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Product inserted successfully",
+        data: {
+            products
+        }
+    });
+
 });
 
-module.exports = { uploadProducts };
+const getAllProducts = asyncHandler(async (req, res) => {
+    const products = await Product.find({})
+        .populate("category", "name");
+
+    if (!products) {
+        return res.status(404).json({
+            success: false,
+            message: "No products found",
+        });
+    }
+
+
+     res.status(200).json({
+        success: true,
+        message: "Product fetched successfully",
+        data: {
+            products
+        }
+    });
+});
+
+module.exports = { uploadProducts, getAllProducts };
