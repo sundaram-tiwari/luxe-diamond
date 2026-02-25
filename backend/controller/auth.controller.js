@@ -139,9 +139,10 @@ const userRefreshToken = asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
-    accessToken: newAccessToken
-    ,
-    data: null
+    message: "New access token generated successfully",
+    data: {
+      accessToken: newAccessToken,
+    }
   })
 });
 
