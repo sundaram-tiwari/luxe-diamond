@@ -97,7 +97,7 @@ const importProducts = async (filePath) => {
 
                 color: row.color ? row.color.split(",") : [],
 
-                video: row.default_video || "yellow",
+                video: row.video ? row.video.split(",") : [],
                 defaultColor: row.default_color,
                 defaultVideo: row.default_video,
 

@@ -2142,7 +2142,7 @@ footer a:hover {
 
 
 .login-wrapper {
-  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  background: white;
 }
 
 .card {
@@ -2161,4 +2161,119 @@ footer a:hover {
 .btn-dark:hover {
   background: #ffffff;
   border: 1px solid black;
+}
+.category-card {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+}
+
+.video-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: inherit;
+}
+
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  /* remove controls visually */
+  pointer-events: none;
+}
+
+.category-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+}
+
+.image-wrapper {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-main-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-main-image {
+  transform: scale(1.05);
+}
+
+.image-slider {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.thumb-hover-area {
+  flex: 1;
+}
+
+.product-video-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.product-card:hover .product-video-preview {
+  opacity: 1;
+}
+
+.product-content {
+  margin-top: 12px;
+}
+
+.product-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.product-price {
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.add-to-bag-box {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 4px;
 }

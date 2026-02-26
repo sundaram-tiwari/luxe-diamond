@@ -112,10 +112,7 @@ const productSchema = new mongoose.Schema({
 
   color: [],
 
-  video: {
-    type: String,
-    enum: ["yellow", "white", "rose"]
-  },
+  video: [],
 
   defaultColor: {
     type: String,
