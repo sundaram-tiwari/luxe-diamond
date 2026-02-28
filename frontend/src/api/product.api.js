@@ -24,3 +24,8 @@ export const getProducts = async (category) => {
     const response = await axiosInstance.get(`/product/get-products/${category}`,);
     return response.data;
 }
+
+export const getProductDetails = async (category,sku) => {
+    const response = await axiosInstance.get(`/product/get-products/${category}/${sku}`,);
+    return response.data;
+}

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getNewArrivals } from "../../api/product.api";
+import { Link, useNavigate } from "react-router-dom";
 
 const NewArrivals = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -43,27 +45,31 @@ const NewArrivals = () => {
             return (
               <div key={product._id} className="col-md-3 col-6">
                 <div className="card border-0 text-center">
-                  {imageToShow ? (
-                    <img
-                      src={imageToShow}
-                      className="card-img-top"
-                      alt={product.name}
-                    />
-                  ) : (
-                    <video
-                      src={videoToShow}
-                      className="card-img-top"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
-                  )}
-
+                  <Link
+                    to={`/product/${product.category?.name}/${product.slug}`}
+                    className="product-detail-link d-block"
+                  >
+                    {imageToShow ? (
+                      <img
+                        src={imageToShow}
+                        className="card-img-top"
+                        alt={product.name}
+                      />
+                    ) : (
+                      <video
+                        src={videoToShow}
+                        className="card-img-top"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      />
+                    )}
+                  </Link>
                   <div className="card-body">
                     <h5>{product.name}</h5>
                     <p className="fw-bold">₹{product.productBasePrice}</p>
-                    <button className="btn btn-outline-dark btn-sm">
+                    <button className="btn btn-outline-dark btn-sm" onClick={()=> navigate(`/product/${product.category?.name}/${product.slug}`)}>
                       View Details
                     </button>
                   </div>
@@ -76,5 +82,4 @@ const NewArrivals = () => {
     </section>
   );
 };
-
 export default NewArrivals;

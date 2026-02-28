@@ -97,11 +97,13 @@ const getCategory = asyncHandler(async (req, res) => {
 
 const newArrivals = asyncHandler(async (req, res) => {
     const chainCategory = await Category.findOne({ name: "Chains" });
+
     const products = await Product.find({
         category: { $ne: chainCategory._id },
         status: true,
         quantity: { $gt: 0 }
     })
+        .populate("category", "name")
         .sort({ createdAt: -1 })
         .limit(10)
         .lean();
@@ -127,10 +129,10 @@ const newArrivals = asyncHandler(async (req, res) => {
         };
     });
 
-
     const filteredProducts = updatedProducts
         .filter(product => product.hasImage)
         .slice(0, 4);
+
     if (!filteredProducts.length) {
         return res.status(404).json({
             success: false,
@@ -180,8 +182,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const updatedProducts = products.map(product => {
         const imageUrl = generateImageUrl(product);
 
-        const hasImage =
-            imageUrl?.[product.defaultColor]?.length > 0;
+        const hasImage = imageUrl?.[product.defaultColor]?.length > 0;
 
         return {
             ...product,
@@ -210,4 +211,38 @@ const getProducts = asyncHandler(async (req, res) => {
         }
     });
 });
-module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts };
+
+const getProductDetails = asyncHandler(async (req, res) => {
+    const { category, productSlug } = req.params;
+
+    const categoryDoc = await Category.findOne({ name: category });
+
+    const product = await Product.findOne({ slug: productSlug, category: categoryDoc._id })
+        .populate("category", "name")
+        .lean();
+
+    if (!product) {
+        return res.status(404).json({
+            success: false,
+            message: "No products found",
+        });
+    }
+
+    const imageUrl = generateImageUrl(product);
+    const videoUrl = generateVideoUrl(product);
+
+    res.status(200).json({
+        success: true,
+        message: "Product fetched successfully",
+        data: {
+            product: {
+                ...product,
+                imageUrl,
+                videoUrl
+            }
+        }
+    });
+
+});
+
+module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails };

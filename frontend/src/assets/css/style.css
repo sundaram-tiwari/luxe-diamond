@@ -2277,3 +2277,100 @@ footer a:hover {
   display: inline-block;
   margin: 0 4px;
 }
+
+/* Hide real radio */
+.custom-check {
+  display: none;
+}
+
+/* Diamond option box */
+.custom-check-label {
+  cursor: pointer;
+}
+
+.custom-check-label div {
+  padding: 8px 18px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Selected style */
+.custom-check:checked + div {
+  border: 1px solid #000;
+  background-color: #000;
+  color: #fff;
+}
+
+/* Remove scrollbar */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.image-slider {
+  pointer-events: none;
+}
+
+.size-dropdown-check-label {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  background: #fff;
+}
+
+.selected-size-text {
+  font-weight: 500;
+}
+
+.toggle {
+  transition: 0.2s ease;
+}
+
+.toggle.rotate {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+.dropdown-body {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.custom-check {
+  display: none;
+}
+
+.custom-check-label {
+  display: block;
+  cursor: pointer;
+}
+
+.custom-check-label > div {
+  padding: 8px 16px;
+  transition: 0.2s ease;
+}
+
+.custom-check:checked + div {
+  background: #000;
+  color: #fff;
+}

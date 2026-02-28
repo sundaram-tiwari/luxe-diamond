@@ -8,6 +8,7 @@ import EmailVerificationSent from "../pages/auth/EmailVerificationSent";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import Products from "../pages/products/Products";
+import ProductDetails from "../pages/products/ProductDetails";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Landing />} />
           <Route path="/product/:category" element={<Products />} />
+          <Route path="/product/:category/:productSlug" element={<ProductDetails />} />
         </Route>
 
         {/* Auth Routes (NO Layout) */}
