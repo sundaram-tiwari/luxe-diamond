@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [megaOpen,setMegaOpen] = useState(false);
+  // const [megaOpen,setMegaOpen] = useState(false);
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
@@ -73,7 +73,7 @@ const Header = () => {
                   </a>
                 </li>
 
-                <li className="dropdown">
+                {/* <li className="dropdown">
                   <button
                     className="btn btn-sm dropdown-toggle border-0"
                     data-bs-toggle="dropdown"
@@ -88,7 +88,7 @@ const Header = () => {
                       <button className="dropdown-item">EUR</button>
                     </li>
                   </ul>
-                </li>
+                </li> */}
               </ul>
             </div>
 
@@ -112,12 +112,12 @@ const Header = () => {
                     <i className="fa-regular fa-heart"></i>
                   </Link>
                 </li>
-                <li className="small text-muted d-none d-md-flex align-items-center">
+                {/* <li className="small text-muted d-none d-md-flex align-items-center">
                   <img src="/assets/img/market.png" width="20" alt="" />
                   <span className="ms-2">
                     locate <br /> our store
                   </span>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     to="/login"
@@ -156,99 +156,35 @@ const Header = () => {
             id="mainNavbar"
           >
             <ul className="navbar-nav gap-4">
-              <li
-                className="nav-item position-static"
-                onMouseEnter={() => setMegaOpen(true)}
-                onMouseLeave={() => setMegaOpen(false)}
-              >
-                <button className="nav-link btn border-0">Rings</button>
 
-                {megaOpen && (
-                  <div className="mega-menu shadow-lg bg-white py-4 px-5 position-absolute start-0 w-100">
-                    <div className="row">
-                      <div className="col-md-3">
-                        <h6 className="fw-bold">Shop By Ring Product</h6>
-                        <ul className="list-unstyled small">
-                          <li>
-                            <Link to="#">Start with a Setting</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Start with a Diamond</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Lab-Created Diamond</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Start with a Gemstone</Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="col-md-3">
-                        <h6 className="fw-bold">Engagement Styles</h6>
-                        <ul className="list-unstyled small">
-                          <li>
-                            <Link to="#">Solitaire</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Halo</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Vintage</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Three-Stone</Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="col-md-3">
-                        <h6 className="fw-bold">Shop by Metal</h6>
-                        <ul className="list-unstyled small">
-                          <li>
-                            <Link to="#">Rose Gold</Link>
-                          </li>
-                          <li>
-                            <Link to="#">White Gold</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Yellow Gold</Link>
-                          </li>
-                          <li>
-                            <Link to="#">Platinum</Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="col-md-3 text-center">
-                        <img
-                          src="/assets/img/cs-img2.png"
-                          alt=""
-                          className="img-fluid rounded"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/earrings">
+                <Link className="nav-link" to="/product/Rings">
+                  Rings
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/product/Earrings">
                   Earrings
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/pendants">
+                <Link className="nav-link" to="/product/Pendants">
                   Pendants
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/solitaires">
-                  Solitaires
+                <Link className="nav-link" to="/product/Bracelets">
+                  Bracelets
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/jewellery">
+                <Link className="nav-link" to="/product/Bangles">
+                  Bangles
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/product">
                   All Jewellery
                 </Link>
               </li>

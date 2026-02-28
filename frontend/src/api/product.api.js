@@ -1,7 +1,7 @@
 import axiosInstance from "../utils/axiosInstance"
 
 export const uploadProducts = async (data) => {
-    const response = await axiosInstance.post('/product/upload-product',data);
+    const response = await axiosInstance.post('/product/upload-product', data);
     return response.data;
 }
 
@@ -20,7 +20,7 @@ export const getNewArrivals = async () => {
     return response.data;
 }
 
-export const getProducts = async () => {
-    const response = await axiosInstance.get('/product/get-products');
+export const getProducts = async (category) => {
+    const response = await axiosInstance.get(`/product/get-products/${category}`,);
     return response.data;
 }

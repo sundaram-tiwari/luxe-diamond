@@ -4,7 +4,7 @@ import { getAllProducts } from "../../../api/product.api";
 export default function CsvDataTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const rowsPerPage = 10;
+  const rowsPerPage = 15;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,6 +23,19 @@ export default function CsvDataTable() {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = products.slice(indexOfFirstRow, indexOfLastRow);
+
+  const pagesToShow = 5;
+
+  const startPage =
+    Math.floor((currentPage - 1) / pagesToShow) * pagesToShow + 1;
+
+  const endPage = Math.min(startPage + pagesToShow - 1, totalPages);
+
+  const pageNumbers = [];
+
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -63,10 +76,7 @@ export default function CsvDataTable() {
                   <td>{row.quantity || "-"}</td>
                   <td>{row.active ? "Yes" : "No"}</td>
                   <td>
-                    <button
-                      className="cursor-pointer fa-solid fa-trash bg-transparent border-0"
-                    >
-                    </button>
+                    <button className="cursor-pointer fa-solid fa-trash bg-transparent border-0"></button>
                   </td>
                 </tr>
               ))
@@ -93,25 +103,38 @@ export default function CsvDataTable() {
               </button>
             </li>
 
-            {[...Array(totalPages)].map((_, index) => (
+            {pageNumbers.map((page) => (
               <li
-                key={index}
-                className={`page-item ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
+                key={page}
+                className={`page-item ${currentPage === page ? "active" : ""}`}
               >
                 <button
                   className={`page-link ${
-                    currentPage === index + 1
-                      ? "bg-dark text-white border-dark"
-                      : ""
+                    currentPage === page ? "bg-dark text-white border-dark" : ""
                   }`}
-                  onClick={() => handlePageChange(index + 1)}
+                  onClick={() => handlePageChange(page)}
                 >
-                  {index + 1}
+                  {page}
                 </button>
               </li>
             ))}
+
+            {endPage < totalPages && (
+              <>
+                <li className="page-item disabled">
+                  <span className="page-link">...</span>
+                </li>
+
+                <li className="page-item">
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(totalPages)}
+                  >
+                    {totalPages}
+                  </button>
+                </li>
+              </>
+            )}
 
             <li
               className={`page-item ${

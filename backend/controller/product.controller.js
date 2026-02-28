@@ -148,12 +148,29 @@ const newArrivals = asyncHandler(async (req, res) => {
 });
 
 const getProducts = asyncHandler(async (req, res) => {
-    const products = await Product.find({}).limit(12)
+    const { categoryName } = req.params;
+
+    let filter = {};
+
+    if (categoryName) {
+
+        const categoryDoc = await Category.findOne({ name: categoryName });
+
+        if (!categoryDoc) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found",
+            });
+        }
+
+        filter.category = categoryDoc._id;
+    }
+
+    const products = await Product.find(filter)
         .populate("category", "name")
-        .limit(20)
         .lean();
 
-    if (!products) {
+    if (!products.length) {
         return res.status(404).json({
             success: false,
             message: "No products found",
@@ -163,20 +180,21 @@ const getProducts = asyncHandler(async (req, res) => {
     const updatedProducts = products.map(product => {
         const imageUrl = generateImageUrl(product);
 
-        const defaultImages =
+        const hasImage =
             imageUrl?.[product.defaultColor]?.length > 0;
 
         return {
             ...product,
             imageUrl,
             videoUrl: generateVideoUrl(product),
-            hasImage: defaultImages
+            hasImage
         };
     });
 
     const filteredProducts = updatedProducts
         .filter(product => product.hasImage)
-        .slice(0,12);
+        .slice(0, 12);
+
     if (!filteredProducts.length) {
         return res.status(404).json({
             success: false,
@@ -192,5 +210,4 @@ const getProducts = asyncHandler(async (req, res) => {
         }
     });
 });
-
-module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals,getProducts };
+module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts };

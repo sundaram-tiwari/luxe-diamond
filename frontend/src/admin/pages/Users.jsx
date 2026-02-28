@@ -32,9 +32,7 @@ const Users = () => {
     <>
       <div className="table-responsive">
          <div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            Users
-          </h1>
+          <h3 className="mb-4 fw-bold">Users</h3>
         </div>
         <table className="table text-dark fs-14">
           <thead className="table-dark">

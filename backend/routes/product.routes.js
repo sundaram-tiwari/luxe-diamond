@@ -10,7 +10,7 @@ router.post('/upload-product',verifyJWT,authorizedRole("ADMIN"),upload.single("f
 
 router.get('/get-all-products',verifyJWT,authorizedRole("ADMIN"),getAllProducts);
 
-router.get('/get-products',getProducts);
+router.get('/get-products/:categoryName',getProducts);
 
 router.get('/category',getCategory);
 
