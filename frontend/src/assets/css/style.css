@@ -2374,3 +2374,8 @@ footer a:hover {
   background: #000;
   color: #fff;
 }
+
+.active-nav {
+  font-weight: 600;
+  border-bottom: 2px solid black;
+}

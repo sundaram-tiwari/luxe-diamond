@@ -6,23 +6,34 @@ const ProductCard = ({ product }) => {
 
   if (!product) return null;
 
-  const defaultColor = product.defaultColor;
-  const media = product?.imageUrl?.[defaultColor] || [];
+  let selectedColor = product.defaultColor;
+  let selectedVideo = null;
+
+  if (product?.imageUrl) {
+    for (const colorKey of Object.keys(product.imageUrl)) {
+      const colorMedia = product.imageUrl[colorKey];
+
+      const foundVideo =
+        product?.videoUrl?.[colorKey] ||
+        colorMedia?.find((url) => url.endsWith(".mp4"));
+
+      if (foundVideo) {
+        selectedColor = colorKey;
+        selectedVideo = foundVideo;
+        break;
+      }
+    }
+  }
+  const media = product?.imageUrl?.[selectedColor] || [];
 
   const images = media.filter(
     (url) =>
-      (url.endsWith(".webp") ||
-        url.endsWith(".jpg") ||
-        url.endsWith(".png")) &&
-      !url.includes("_Model_")
+      (url.endsWith(".webp") || url.endsWith(".jpg") || url.endsWith(".png")) &&
+      !url.includes("_Model_"),
   );
-  const video =
-    product?.videoUrl?.[defaultColor] ||
-    media.find((url) => url.endsWith(".mp4"));
 
   const mainImage = images[0];
   const hoverImage = images[1] || images[0];
-
   return (
     <div className="col-6 col-lg-4 col-xl-3 p-1 p-md-2 m-0">
       <div
@@ -32,10 +43,10 @@ const ProductCard = ({ product }) => {
       >
         <div className="image-wrapper position-relative">
           <Link
-             to={`/product/${product.category?.name}/${product.slug}`}
+            to={`/product/${product.category?.name}/${product.slug}`}
             className="product-detail-link d-block"
           >
-            {isHovered && video ? (
+            {isHovered && selectedVideo ? (
               <video
                 className="w-100 product-main-image"
                 autoPlay
@@ -43,7 +54,7 @@ const ProductCard = ({ product }) => {
                 loop
                 playsInline
               >
-                <source src={video} type="video/mp4" />
+                <source src={selectedVideo} type="video/mp4" />
               </video>
             ) : (
               <img
@@ -69,13 +80,11 @@ const ProductCard = ({ product }) => {
             {product.name}
           </Link>
 
-          <div className="product-price">
-            ₹ {product.productBasePrice}
-          </div>
+          <div className="product-price">₹ {product.productBasePrice}</div>
 
           <div className="add-to-bag-box">
             <Link
-               to={`/product/${product.category?.name}/${product.slug}`}
+              to={`/product/${product.category?.name}/${product.slug}`}
               className="add-to-bag"
             >
               Add to Cart

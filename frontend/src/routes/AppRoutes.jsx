@@ -18,6 +18,7 @@ const AppRoutes = () => {
         {/* Layout Routes */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Landing />} />
+          <Route path="/product" element={<Products />} />
           <Route path="/product/:category" element={<Products />} />
           <Route path="/product/:category/:productSlug" element={<ProductDetails />} />
         </Route>

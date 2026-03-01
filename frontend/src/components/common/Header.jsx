@@ -1,22 +1,36 @@
 // import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
   // const [megaOpen,setMegaOpen] = useState(false);
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
-
-      <div className="modal fade search-modal" id="searchModal" tabIndex="-1" aria-hidden="true">
+      <div
+        className="modal fade search-modal"
+        id="searchModal"
+        tabIndex="-1"
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-body">
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-              </button>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
               <form action="#" className="product-search">
                 <div className="input-group">
-                  <input type="search" className="form-control" placeholder="Search products…" />
-                  <button type="button" className="btn" data-bs-dismiss="modal"><i className="fa-solid fa-arrow-right"></i></button>
+                  <input
+                    type="search"
+                    className="form-control"
+                    placeholder="Search products…"
+                  />
+                  <button type="button" className="btn" data-bs-dismiss="modal">
+                    <i className="fa-solid fa-arrow-right"></i>
+                  </button>
                 </div>
               </form>
             </div>
@@ -156,43 +170,85 @@ const Header = () => {
             id="mainNavbar"
           >
             <ul className="navbar-nav gap-4">
-
-
               <li className="nav-item">
-                <Link className="nav-link" to="/product/Rings">
+                <NavLink
+                  to="/product/Rings"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   Rings
-                </Link>
+                </NavLink>
               </li>
+
               <li className="nav-item">
-                <Link className="nav-link" to="/product/Earrings">
+                <NavLink
+                  to="/product/Earrings"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   Earrings
-                </Link>
+                </NavLink>
               </li>
+
               <li className="nav-item">
-                <Link className="nav-link" to="/product/Pendants">
+                <NavLink
+                  to="/product/Pendants"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   Pendants
-                </Link>
+                </NavLink>
               </li>
+
               <li className="nav-item">
-                <Link className="nav-link" to="/product/Bracelets">
+                <NavLink
+                  to="/product/Bracelets"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   Bracelets
-                </Link>
+                </NavLink>
               </li>
+
               <li className="nav-item">
-                <Link className="nav-link" to="/product/Bangles">
+                <NavLink
+                  to="/product/Bangles"
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   Bangles
-                </Link>
+                </NavLink>
               </li>
+
               <li className="nav-item">
-                <Link className="nav-link" to="/product">
+                <NavLink
+                  to="/product"
+                  end
+                  className={({ isActive }) =>
+                    isActive ? "nav-link active-nav" : "nav-link"
+                  }
+                >
                   All Jewellery
-                </Link>
+                </NavLink>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link text-danger" to="/offers">
+
+              {/* <li className="nav-item">
+                <NavLink
+                  to="/offers"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "nav-link text-danger active-nav"
+                      : "nav-link text-danger"
+                  }
+                >
                   Offers
-                </Link>
-              </li>
+                </NavLink>
+              </li> */}
             </ul>
           </div>
         </div>

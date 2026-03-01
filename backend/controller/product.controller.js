@@ -94,7 +94,6 @@ const getCategory = asyncHandler(async (req, res) => {
     });
 });
 
-
 const newArrivals = asyncHandler(async (req, res) => {
     const chainCategory = await Category.findOne({ name: "Chains" });
 
@@ -194,7 +193,6 @@ const getProducts = asyncHandler(async (req, res) => {
 
     const filteredProducts = updatedProducts
         .filter(product => product.hasImage)
-        .slice(0, 12);
 
     if (!filteredProducts.length) {
         return res.status(404).json({
