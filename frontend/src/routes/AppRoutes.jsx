@@ -9,6 +9,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import Products from "../pages/products/Products";
 import ProductDetails from "../pages/products/ProductDetails";
+import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
           <Route path="/product" element={<Products />} />
           <Route path="/product/:category" element={<Products />} />
           <Route path="/product/:category/:productSlug" element={<ProductDetails />} />
+      <Route path="*" element={<NotFound />} />
         </Route>
 
         {/* Auth Routes (NO Layout) */}
@@ -32,6 +34,7 @@ const AppRoutes = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
 
       </Routes>
+
     </BrowserRouter>
   );
 };

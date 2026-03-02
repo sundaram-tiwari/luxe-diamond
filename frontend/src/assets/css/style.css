@@ -2379,3 +2379,13 @@ footer a:hover {
   font-weight: 600;
   border-bottom: 2px solid black;
 }
+
+.not-found-title {
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+.not-found-btn {
+  border-radius: 0;
+  font-weight: 500;
+}

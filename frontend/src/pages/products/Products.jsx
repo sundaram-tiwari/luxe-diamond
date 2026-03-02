@@ -4,10 +4,13 @@ import ProductCard from "../../components/products/ProductCard";
 import { getProducts } from "../../api/product.api";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import Loader from "../../components/common/Loader";
 
 const Products = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   const [visibleCount, setVisibleCount] = useState(12);
   const [sortOption, setSortOption] = useState(() => {
@@ -20,11 +23,14 @@ const Products = () => {
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
+        setLoading(true);
         const res = await getProducts(category);
         setProducts(res?.data?.products || []);
         setVisibleCount(12);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -68,10 +74,12 @@ const Products = () => {
   const handleClearAll = () => {
     setSelectedPrices([]);
     setSortOption("best");
-    setVisibleCount(8);
+    setVisibleCount(12);
   };
 
   return (
+    <>
+    {loading && <Loader />}
     <div className="container-fluid py-4">
       <div className="row">
         <div className="col-lg-3 col-md-4 mb-4">
@@ -104,6 +112,7 @@ const Products = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

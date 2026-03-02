@@ -227,8 +227,7 @@ const Header = () => {
 
               <li className="nav-item">
                 <NavLink
-                  to="/product"
-                  end
+                  to="/product/all"
                   className={({ isActive }) =>
                     isActive ? "nav-link active-nav" : "nav-link"
                   }
