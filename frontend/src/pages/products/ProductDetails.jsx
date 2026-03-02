@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProductDetails } from "../../api/product.api";
 import Loader from "../../components/common/Loader";
+import { addToCart } from "../../utils/cart";
 
 export default function ProductDetails() {
   const { category, productSlug } = useParams();
@@ -234,7 +235,15 @@ export default function ProductDetails() {
           </div>
 
           <div className="d-flex gap-2 mb-4">
-            <button className="btn btn-dark w-100 py-2">Add to Cart</button>
+            <button
+              className="btn btn-dark w-100 py-2"
+              onClick={() => {
+                 addToCart(product, selectedColor, selectedSize);
+                alert("Added to cart"); 
+              }}
+            >
+              Add to Cart
+            </button>
             <a
               target="_blank"
               rel="noreferrer"
@@ -282,8 +291,6 @@ export default function ProductDetails() {
     </div>
   );
 }
-
-
 
 // import { useState } from "react";
 // import { Link } from "react-router-dom";

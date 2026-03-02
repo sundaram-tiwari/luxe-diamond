@@ -1,8 +1,12 @@
 // import React, { useState } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { getCart } from "../../utils/cart";
 
 const Header = () => {
   // const [megaOpen,setMegaOpen] = useState(false);
+  const [cartItems] = useState(() => getCart());
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
@@ -122,8 +126,11 @@ const Header = () => {
                   <i className="fa-solid fa-magnifying-glass cursor-pointer"></i>
                 </li>
                 <li>
-                  <Link to="/wishlist" className="text-dark">
-                    <i className="fa-regular fa-heart"></i>
+                  <Link to="/cart" className="cart-icon-wrapper">
+                    <i className="fa-solid fa-shopping-cart"></i>
+                    {cartCount > 0 && (
+                      <span className="cart-count">{cartCount}</span>
+                    )}
                   </Link>
                 </li>
                 {/* <li className="small text-muted d-none d-md-flex align-items-center">

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import Landing from "../pages/Landing";
 import Login from "../pages/auth/Login";
@@ -11,31 +11,55 @@ import Products from "../pages/products/Products";
 import ProductDetails from "../pages/products/ProductDetails";
 import NotFound from "../pages/NotFound";
 
+// Admin
+import AdminLayout from "../admin/layout/AdminLayout";
+import Dashboard from "../admin/pages/Dashboard";
+import AdminProducts from "../admin/pages/Products";
+import Users from "../admin/pages/Users";
+import AdminLogin from "../admin/pages/AdminLogin";
+import AdminProtectedRoute from "./ProtectedRoute";
+import Profile from "../admin/pages/AdminProfile";
+import Cart from "../pages/Cart";
+
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
 
-        {/* Layout Routes */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/product" element={<Products />} />
-          <Route path="/product/:category" element={<Products />} />
-          <Route path="/product/:category/:productSlug" element={<ProductDetails />} />
-      <Route path="*" element={<NotFound />} />
+     {/* Public routess */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/product" element={<Products />} />
+        <Route path="/product/:category" element={<Products />} />
+        <Route
+          path="/product/:category/:productSlug"
+          element={<ProductDetails />}
+        />
+      </Route>
+
+      {/* Auth routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/email-verification-sent" element={<EmailVerificationSent />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
+      {/* Admin Routes */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+
+      <Route element={<AdminProtectedRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="users" element={<Users />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
+      </Route>
 
-        {/* Auth Routes (NO Layout) */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/email-verification-sent" element={<EmailVerificationSent />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="*" element={<NotFound />} />
 
-      </Routes>
-
-    </BrowserRouter>
+    </Routes>
   );
 };
 

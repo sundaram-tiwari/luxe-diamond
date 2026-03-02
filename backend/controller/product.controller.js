@@ -151,6 +151,7 @@ const newArrivals = asyncHandler(async (req, res) => {
 const getProducts = asyncHandler(async (req, res) => {
     const { categoryName } = req.params;
 
+    let products;
     let filter = {};
 
     if (categoryName) {
@@ -167,9 +168,14 @@ const getProducts = asyncHandler(async (req, res) => {
         filter.category = categoryDoc._id;
     }
 
-    const products = await Product.find(filter)
-        .populate("category", "name")
-        .lean();
+    if (categoryName == "all") {
+        products = await Product.find()
+            .lean();
+    } else {
+        products = await Product.find(filter)
+            .populate("category", "name")
+            .lean();
+    }
 
     if (!products.length) {
         return res.status(404).json({

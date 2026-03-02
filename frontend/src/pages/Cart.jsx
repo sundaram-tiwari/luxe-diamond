@@ -1,0 +1,161 @@
+import { useState } from "react";
+import { getCart, saveCart } from "../utils/cart";
+
+const Cart = () => {
+  const [cartItems, setCartItems] = useState(() => getCart());
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const updateQuantity = (index, qty) => {
+    const updated = [...cartItems];
+    updated[index].quantity = Number(qty);
+    setCartItems(updated);
+    saveCart(updated);
+  };
+
+  const removeItem = (index) => {
+    const updated = cartItems.filter((_, i) => i !== index);
+    setCartItems(updated);
+    saveCart(updated);
+  };
+
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.priceAtAddTime * item.quantity,
+    0,
+  );
+
+  return (
+    <div className="container-xl">
+      <div className="row p-0 m-0 justify-content-center align-items-center">
+        <div className="col-12 col-xl-10">
+          <div className="d-flex flex-column justify-content-center align-items-center py-5 my-4">
+            <h1 className="mb-2 text-black font-semibold line-height-1.5 pt-1">
+              Review your bag.
+            </h1>
+            <div className="text-gray-800-dark font-semibold line-height-1.5 pb-1">
+              Get free shipping and free returns on all orders.
+            </div>
+          </div>
+
+          <div className="divide"></div>
+
+          <div id="cart-table" className="divide-y">
+            {cartItems.map((item, index) => (
+              <div key={index} className="cart-item-wrapper py-4">
+                <div className="d-flex flex-column flex-md-row align-items-start gap-4">
+                  <div className="cart-product-image-wrapper">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="cart-product-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/assets/img/diamond.png";
+                      }}
+                    />
+                  </div>
+                  <div className="flex-grow-1 w-100">
+
+                    <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
+                      <h2 className="cart-title m-0">{item.name}</h2>
+
+                      <div className="d-flex align-items-center gap-4">
+                        <select
+                          className="cart-product-qty"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateQuantity(index, e.target.value)
+                          }
+                        >
+                          {[1, 2, 3, 4, 5].map((q) => (
+                            <option key={q} value={q}>
+                              {q}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="cart-price">
+                          ₹{item.priceAtAddTime * item.quantity}/-
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 position-relative">
+                      <div
+                        className="spec-toggle"
+                        onClick={() =>
+                          setOpenIndex(openIndex === index ? null : index)
+                        }
+                      >
+                        Specifications
+                        <span
+                          className={`arrow ${openIndex === index ? "rotate" : ""}`}
+                        >
+                          ▼
+                        </span>
+                      </div>
+
+                      {openIndex === index && (
+                        <div className="spec-details mt-2">
+                          <div>
+                            <strong>SKU:</strong> {item.sku}
+                          </div>
+                          {item.size && (
+                            <div>
+                              <strong>Size:</strong> {item.size}
+                            </div>
+                          )}
+                          <div>
+                            <strong>Metal:</strong> {item.metal}
+                          </div>
+                          <div>
+                            <strong>Diamond:</strong> {item.diamond}
+                          </div>
+                        </div>
+                      )}
+
+                      <div
+                        className="remove-btn"
+                        onClick={() => removeItem(index)}
+                      >
+                        Remove
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="divide"></div>
+
+          {cartItems.length > 0 && (
+            <div className="d-flex flex-column flex-md-row align-items-start justify-content-center py-4 my-4 gap-4">
+              <div className="flex-grow-1 w-100 d-flex flex-column gap-2">
+                <div className="d-flex justify-content-between text-gray-800-dark">
+                  <span>Subtotal ({cartItems.length} Items)</span>
+                  <span>₹{subtotal}/-</span>
+                </div>
+
+                <div className="divide my-3"></div>
+
+                <div className="d-flex justify-content-between text-black font-semibold">
+                  <h3>Total</h3>
+                  <span>₹{subtotal}/-</span>
+                </div>
+
+                <div className="row m-0 p-0 justify-content-end align-items-center mt-3">
+                  <button className="btn btn-dark col-12 col-sm-6 py-3">
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Cart;
