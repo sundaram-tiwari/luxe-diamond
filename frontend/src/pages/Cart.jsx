@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { getCart, saveCart } from "../utils/cart";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState(() => getCart());
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndexes, setOpenIndexes] = useState(
+    cartItems.map((_, i) => i)
+  );
 
   const updateQuantity = (index, qty) => {
     const updated = [...cartItems];
@@ -16,11 +19,12 @@ const Cart = () => {
     const updated = cartItems.filter((_, i) => i !== index);
     setCartItems(updated);
     saveCart(updated);
+    setOpenIndexes((prev) => prev.filter((i) => i !== index));
   };
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.priceAtAddTime * item.quantity,
-    0,
+    0
   );
 
   return (
@@ -54,8 +58,8 @@ const Cart = () => {
                       }}
                     />
                   </div>
-                  <div className="flex-grow-1 w-100">
 
+                  <div className="flex-grow-1 w-100">
                     <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
                       <h2 className="cart-title m-0">{item.name}</h2>
 
@@ -84,18 +88,24 @@ const Cart = () => {
                       <div
                         className="spec-toggle"
                         onClick={() =>
-                          setOpenIndex(openIndex === index ? null : index)
+                          setOpenIndexes((prev) =>
+                            prev.includes(index)
+                              ? prev.filter((i) => i !== index)
+                              : [...prev, index]
+                          )
                         }
                       >
                         Specifications
                         <span
-                          className={`arrow ${openIndex === index ? "rotate" : ""}`}
+                          className={`arrow ${
+                            openIndexes.includes(index) ? "rotate" : ""
+                          }`}
                         >
                           ▼
                         </span>
                       </div>
 
-                      {openIndex === index && (
+                      {openIndexes.includes(index) && (
                         <div className="spec-details mt-2">
                           <div>
                             <strong>SKU:</strong> {item.sku}
@@ -145,9 +155,11 @@ const Cart = () => {
                 </div>
 
                 <div className="row m-0 p-0 justify-content-end align-items-center mt-3">
-                  <button className="btn btn-dark col-12 col-sm-6 py-3">
-                    Proceed to Checkout
-                  </button>
+                  <Link to="/checkout">
+                    <button className="btn btn-dark col-12 col-sm-6 py-3">
+                      Proceed to Checkout
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

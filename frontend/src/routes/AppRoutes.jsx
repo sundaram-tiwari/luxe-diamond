@@ -20,6 +20,7 @@ import AdminLogin from "../admin/pages/AdminLogin";
 import AdminProtectedRoute from "./ProtectedRoute";
 import Profile from "../admin/pages/AdminProfile";
 import Cart from "../pages/Cart";
+import Checkout from "../pages/Checkout";
 
 const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Landing />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/product" element={<Products />} />
         <Route path="/product/:category" element={<Products />} />
         <Route
