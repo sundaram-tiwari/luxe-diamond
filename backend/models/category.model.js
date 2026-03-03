@@ -8,7 +8,11 @@ const categorySchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: true
-    }
+    },
+    sizes:[],
+    defaultSize:{
+        type: Number
+    },  
 },{timestamps: true});
 
 module.exports = mongoose.model("Category",categorySchema);

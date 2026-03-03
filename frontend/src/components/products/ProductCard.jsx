@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { addToCart } from "../../utils/cart";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -7,6 +8,7 @@ const ProductCard = ({ product }) => {
   if (!product) return null;
 
   let selectedColor = product.defaultColor;
+  let selectedSize = product.defaultSize;
   let selectedVideo = null;
 
   if (product?.imageUrl) {
@@ -84,8 +86,12 @@ const ProductCard = ({ product }) => {
 
           <div className="add-to-bag-box">
             <Link
-              to={`/product/${product.category?.name}/${product.slug}`}
+              to={`/cart`}
               className="add-to-bag"
+              onClick={() => {
+                addToCart(product, selectedColor, selectedSize);
+                alert("Added to cart");
+              }}
             >
               Add to Cart
             </Link>

@@ -36,7 +36,7 @@ const Checkout = () => {
                 <label className="form-label">First Name</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="firstName"
                   placeholder="First Name"
                   value={billing.firstName}
@@ -49,7 +49,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="Last Name"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="lastName"
                   value={billing.lastName}
                   onChange={handleChange}
@@ -61,7 +61,7 @@ const Checkout = () => {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="email"
                   value={billing.email}
                   onChange={handleChange}
@@ -73,7 +73,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="Address"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="address"
                   value={billing.address}
                   onChange={handleChange}
@@ -85,7 +85,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="State"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="state"
                   value={billing.state}
                   onChange={handleChange}
@@ -97,7 +97,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="City"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="city"
                   value={billing.city}
                   onChange={handleChange}
@@ -109,7 +109,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="Pincode"
-                  className="form-control"
+                  className="form-control bg-light"
                   name="pincode"
                   value={billing.pincode}
                   onChange={handleChange}
@@ -121,7 +121,7 @@ const Checkout = () => {
                 <input
                   type="text"
                   placeholder="Mobile No."
-                  className="form-control"
+                  className="form-control bg-light"
                   name="phone"
                   value={billing.phone}
                   onChange={handleChange}

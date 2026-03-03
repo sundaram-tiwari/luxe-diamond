@@ -43,7 +43,6 @@ const getAllProducts = asyncHandler(async (req, res) => {
         });
     }
 
-
     res.status(200).json({
         success: true,
         message: "Product fetched successfully",
@@ -242,7 +241,9 @@ const getProductDetails = asyncHandler(async (req, res) => {
             product: {
                 ...product,
                 imageUrl,
-                videoUrl
+                videoUrl,
+                sizes: categoryDoc.sizes,
+                defaultSize: categoryDoc.defaultSize,
             }
         }
     });

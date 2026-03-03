@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState(() => getCart());
-  const [openIndexes, setOpenIndexes] = useState(
-    cartItems.map((_, i) => i)
-  );
+  const [openIndexes, setOpenIndexes] = useState(cartItems.map((_, i) => i));
 
   const updateQuantity = (index, qty) => {
     const updated = [...cartItems];
@@ -24,7 +22,7 @@ const Cart = () => {
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.priceAtAddTime * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -42,100 +40,125 @@ const Cart = () => {
 
           <div className="divide"></div>
 
-          <div id="cart-table" className="divide-y">
-            {cartItems.map((item, index) => (
-              <div key={index} className="cart-item-wrapper py-4">
-                <div className="d-flex flex-column flex-md-row align-items-start gap-4">
-                  <div className="cart-product-image-wrapper">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="cart-product-image"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/assets/img/diamond.png";
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex-grow-1 w-100">
-                    <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
-                      <h2 className="cart-title m-0">{item.name}</h2>
-
-                      <div className="d-flex align-items-center gap-4">
-                        <select
-                          className="cart-product-qty"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateQuantity(index, e.target.value)
-                          }
-                        >
-                          {[1, 2, 3, 4, 5].map((q) => (
-                            <option key={q} value={q}>
-                              {q}
-                            </option>
-                          ))}
-                        </select>
-
-                        <div className="cart-price">
-                          ₹{item.priceAtAddTime * item.quantity}/-
-                        </div>
-                      </div>
+          {cartItems.length > 0 ? (
+            <div id="cart-table" className="divide-y">
+              {cartItems.map((item, index) => (
+                <div key={index} className="cart-item-wrapper py-4">
+                  <div className="d-flex flex-column flex-md-row align-items-start gap-4">
+                    <div className="cart-product-image-wrapper">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="cart-product-image"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/assets/img/diamond.png";
+                        }}
+                      />
                     </div>
 
-                    <div className="mt-3 position-relative">
-                      <div
-                        className="spec-toggle"
-                        onClick={() =>
-                          setOpenIndexes((prev) =>
-                            prev.includes(index)
-                              ? prev.filter((i) => i !== index)
-                              : [...prev, index]
-                          )
-                        }
-                      >
-                        Specifications
-                        <span
-                          className={`arrow ${
-                            openIndexes.includes(index) ? "rotate" : ""
-                          }`}
-                        >
-                          ▼
-                        </span>
-                      </div>
+                    <div className="flex-grow-1 w-100">
+                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
+                        <h2 className="cart-title m-0">{item.name}</h2>
 
-                      {openIndexes.includes(index) && (
-                        <div className="spec-details mt-2">
-                          <div>
-                            <strong>SKU:</strong> {item.sku}
-                          </div>
-                          {item.size && (
-                            <div>
-                              <strong>Size:</strong> {item.size}
-                            </div>
-                          )}
-                          <div>
-                            <strong>Metal:</strong> {item.metal}
-                          </div>
-                          <div>
-                            <strong>Diamond:</strong> {item.diamond}
+                        <div className="d-flex align-items-center gap-4">
+                          <select
+                            className="cart-product-qty"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              updateQuantity(index, e.target.value)
+                            }
+                          >
+                            {[1, 2, 3, 4, 5].map((q) => (
+                              <option key={q} value={q}>
+                                {q}
+                              </option>
+                            ))}
+                          </select>
+
+                          <div className="cart-price">
+                            ₹{item.priceAtAddTime * item.quantity}/-
                           </div>
                         </div>
-                      )}
+                      </div>
 
-                      <div
-                        className="remove-btn"
-                        onClick={() => removeItem(index)}
-                      >
-                        Remove
+                      <div className="mt-3 position-relative">
+                        <div
+                          className="spec-toggle"
+                          onClick={() =>
+                            setOpenIndexes((prev) =>
+                              prev.includes(index)
+                                ? prev.filter((i) => i !== index)
+                                : [...prev, index],
+                            )
+                          }
+                        >
+                          Specifications
+                          <span
+                            className={`arrow ${
+                              openIndexes.includes(index) ? "rotate" : ""
+                            }`}
+                          >
+                            ▼
+                          </span>
+                        </div>
+
+                        {openIndexes.includes(index) && (
+                          <div className="spec-details mt-2">
+                            <div>
+                              <strong>SKU:</strong> {item.sku}
+                            </div>
+                            {item.size && (
+                              <div>
+                                <strong>Size:</strong> {item.size}
+                              </div>
+                            )}
+                            <div>
+                              <strong>Metal:</strong> {item.metal}
+                            </div>
+                            <div>
+                              <strong>Diamond:</strong> {item.diamond}
+                            </div>
+                          </div>
+                        )}
+
+                        <div
+                          className="remove-btn"
+                          onClick={() => removeItem(index)}
+                        >
+                          Remove
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-cart-wrapper d-flex flex-column justify-content-center align-items-center text-center mb-5">
+              <div className="empty-cart-icon mb-4">
+                <img
+                  src="/assets/img/diamond.png"
+                  alt="Empty Cart"
+                  style={{  opacity: "1" }}
+                />
               </div>
-            ))}
-          </div>
+
+              <h2 className="mb-3 fw-semibold text-black">Your Bag is Empty</h2>
+
+              <p className="text-muted mb-4" style={{ maxWidth: "400px" }}>
+                Looks like you haven't added anything yet. Explore our timeless
+                diamond collections and find something beautiful.
+              </p>
+
+              <Link to="/product/Rings">
+                <button className="btn btn-dark px-5 py-3 rounded-pill">
+                  Continue Shopping
+                </button>
+              </Link>
+            </div>
+          )}
 
           <div className="divide"></div>
 

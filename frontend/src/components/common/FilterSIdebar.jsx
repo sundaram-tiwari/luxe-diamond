@@ -37,7 +37,7 @@ const FilterSidebar = ({
       <div className="mb-4">
         <h6 className="fw-semibold mb-2">Sort By</h6>
         <select
-          className="form-select"
+          className="form-select bg-light"
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
         >

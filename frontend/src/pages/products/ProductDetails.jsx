@@ -13,8 +13,9 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedMetal, setSelectedMetal] = useState("14");
   const [selectedDiamond, setSelectedDiamond] = useState("IJ-SI");
-  const [selectedSize, setSelectedSize] = useState("12");
+  const [selectedSize, setSelectedSize] = useState();
   const [isSizeOpen, setIsSizeOpen] = useState(false);
+  const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -24,6 +25,9 @@ export default function ProductDetails() {
         const data = res.data.product;
 
         setProduct(data);
+
+        setSizes(data.sizes);
+        setSelectedSize(data.defaultSize);
         setSelectedColor(data.defaultColor);
       } catch (err) {
         console.log(err);
@@ -185,61 +189,66 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            <div className="size-dropdown position-relative">
-              <label
-                className="size-dropdown-check-label px-4 mb-2 d-flex justify-content-between align-items-center"
-                onClick={() => setIsSizeOpen(!isSizeOpen)}
-              >
-                <div className="selected-size-text">{selectedSize}</div>
-
-                <svg
-                  className={`toggle ${isSizeOpen ? "rotate" : ""}`}
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
+            {Array.isArray(sizes) && sizes.length > 0 && (
+              <div className="size-dropdown position-relative">
+                <label
+                  className="size-dropdown-check-label px-4 mb-2 d-flex justify-content-between align-items-center"
+                  onClick={() => setIsSizeOpen(!isSizeOpen)}
+                  style={{ cursor: "pointer" }}
                 >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </label>
-
-              {isSizeOpen && (
-                <div className="dropdown shadow-sm">
-                  <div className="dropdown-body">
-                    {Array.from({ length: 20 }, (_, i) => 8 + i).map((size) => (
-                      <label key={size} className="custom-check-label px-4">
-                        <input
-                          type="radio"
-                          className="custom-check"
-                          name="size"
-                          value={size}
-                          checked={selectedSize === size.toString()}
-                          onChange={() => {
-                            setSelectedSize(size.toString());
-                            setIsSizeOpen(false);
-                          }}
-                        />
-                        <div>{size}</div>
-                      </label>
-                    ))}
+                  <div className="selected-size-text">
+                    {selectedSize || "Select Size"}
                   </div>
-                </div>
-              )}
-            </div>
+
+                  <svg
+                    className={`toggle ${isSizeOpen ? "rotate" : ""}`}
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </label>
+
+                {isSizeOpen && (
+                  <div className="dropdown shadow-sm position-absolute w-100 bg-white rounded-3">
+                    <div className="dropdown-body">
+                      {sizes.map((size) => (
+                        <label key={size} className="custom-check-label px-4">
+                          <input
+                            type="radio"
+                            className="custom-check"
+                            name="size"
+                            value={size}
+                            checked={selectedSize === size.toString()}
+                            onChange={() => {
+                              setSelectedSize(size.toString());
+                              setIsSizeOpen(false);
+                            }}
+                          />
+                          <div>{size}</div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="d-flex gap-2 mb-4">
             <button
               className="btn btn-dark w-100 py-2"
               onClick={() => {
-                 addToCart(product, selectedColor, selectedSize);
-                alert("Added to cart"); 
+                addToCart(product, selectedColor, selectedSize);
+                alert("Added to cart");
               }}
             >
               Add to Cart

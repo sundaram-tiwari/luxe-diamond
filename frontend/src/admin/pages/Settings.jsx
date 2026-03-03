@@ -13,6 +13,7 @@ const Setting = () => {
     price_GH_SI: "",
     price_GH_VS: "",
     price_EF_VVS: "",
+    making_charges:"",
   });
 
   const handleChange = (e) => {
@@ -37,6 +38,7 @@ const Setting = () => {
           price_GH_SI: data.price_GH_SI || "",
           price_GH_VS: data.price_GH_VS || "",
           price_EF_VVS: data.price_EF_VVS || "",
+          making_charges: data.making_charges || "",
         });
       } catch (error) {
         console.log(error);
@@ -167,6 +169,18 @@ const Setting = () => {
                 onChange={handleChange}
               />
               <label htmlFor="gold_rate_22k">Gold Rate 22K</label>
+            </div>
+            <div className="form-floating w-100 mb-4">
+              <input
+                type="text"
+                className="form-control bg-transparent"
+                id="making_charges"
+                name="making_charges"
+                placeholder="Making Charges"
+                value={formData.making_charges}
+                onChange={handleChange}
+              />
+              <label htmlFor="making_charges">Making Charges</label>
             </div>
 
             <button
