@@ -8,4 +8,11 @@ const adminLoginSchema = z.object({
         .min(6, "Password must be atleast 6 characters")
 });
 
-module.exports = {adminLoginSchema}
+const addSettingsSchema = z.object({
+    name: z 
+        .string(),
+    value: z
+        .number()
+})
+
+module.exports = {adminLoginSchema, addSettingsSchema}

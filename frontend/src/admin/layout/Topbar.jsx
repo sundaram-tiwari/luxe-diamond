@@ -11,7 +11,6 @@ const Topbar = () => {
   return (
     <header>
       <nav className="cat-topnav navbar navbar-expand">
-        {/* Logo */}
         <Link className="navbar-brand" to="/admin/dashboard">
           <img
             src="/assets/img/lux-diamond-logo-trans.png"
@@ -23,11 +22,13 @@ const Topbar = () => {
 
         <h4 className="m-0 text-dark ms-4">Admin Panel</h4>
 
-        {/* Profile Dropdown */}
-        <ul className="navbar-nav ms-auto me-3">
+        <ul
+          className="navbar-nav ms-auto "
+          style={{ marginRight: "15rem", marginBottom: "3rem" }}
+        >
           <li className="nav-item dropdown">
             <div
-              className="d-flex align-items-center dropdown-toggle"
+              className="d-flex align-items-center dropdown-toggle bg-light"
               role="button"
               data-bs-toggle="dropdown"
             >

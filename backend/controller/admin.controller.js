@@ -1,7 +1,8 @@
 const User = require("../models/user.model");
+const Setting = require("../models/settings.model");
 const bcrypt = require("bcryptjs");
 const { asyncHandler } = require("../utils/asyncHandler");
-const { adminLoginSchema } = require("../zod/admin.validation.schema");
+const { adminLoginSchema, addSettingsSchema } = require("../zod/admin.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
 
 const adminLogin = asyncHandler(async (req, res) => {
@@ -30,7 +31,7 @@ const adminLogin = asyncHandler(async (req, res) => {
     admin.refreshToken = await bcrypt.hash(jwtRefreshToken, 10);
     await admin.save();
 
-    res.cookie("refreshToken", jwtRefreshToken,{
+    res.cookie("refreshToken", jwtRefreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
@@ -47,4 +48,63 @@ const adminLogin = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {adminLogin};
+const getSettings = asyncHandler(async (req, res) => {
+    const settings = await Setting.find();
+
+    const formattedSetting = {};
+
+    settings.forEach(item => {
+        formattedSetting[item.name] = item.value;
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Product setting fetched",
+        data: {
+            formattedSetting
+        }
+    });
+});
+
+const updateSetting  = asyncHandler(async (req, res) => {
+    const validatedData = addSettingsSchema.parse(req.body);
+    const { name, value } = validatedData;
+
+    const setting = await Setting.findOneAndUpdate(
+        { name },
+        { value },
+        { new: true, upsert: true }
+    );
+
+
+    res.status(200).json({
+        success: true,
+        message: "Product details setting found",
+        data: {
+            setting
+        }
+    });
+});
+
+
+const bulkUpdateSettings = asyncHandler(async (req, res) => {
+    const settings = req.body;
+
+    const operations = settings.map(item => ({
+        updateOne: {
+            filter: { name: item.name },
+            update: { value: item.value },
+            upsert: true
+        }
+    }));
+
+    await Setting.bulkWrite(operations);
+
+    res.status(200).json({
+        success: true,
+        message: "Settings updated successfully"
+    });
+});
+
+
+module.exports = { adminLogin, getSettings, updateSetting , bulkUpdateSettings };

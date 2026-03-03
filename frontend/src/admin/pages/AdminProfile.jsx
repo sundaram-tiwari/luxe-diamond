@@ -32,11 +32,11 @@ const Profile = () => {
         <h3 className="mb-4 fw-bold">Profile</h3>
 
         <form onSubmit={handleSubmit}>
-          
-          <div className="form-floating mb-3">
+
+          <div className="form-floating w-100 mb-3">
             <input
               type="text"
-              className="form-control bg-tranparent"
+              className="form-control bg-transparent"
               id="name"
               name="name"
               placeholder="Name"
@@ -46,23 +46,23 @@ const Profile = () => {
             <label htmlFor="name">Name</label>
           </div>
 
-          <div className="form-floating mb-3">
+          <div className="form-floating w-100 mb-3">
             <input
               type="email"
-              className="form-control"
+              className="form-control bg-transparent"
               id="email"
               name="email"
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
             />
-            <label htmlFor="email">Email address</label>
+            <label htmlFor="email">Email Address</label>
           </div>
 
-          <div className="form-floating mb-3">
+          <div className="form-floating w-100 mb-3">
             <input
               type="tel"
-              className="form-control"
+              className="form-control bg-transparent"
               id="phone"
               name="phone"
               placeholder="Phone"
@@ -72,63 +72,36 @@ const Profile = () => {
             <label htmlFor="phone">Phone</label>
           </div>
 
-          {/* <div className="form-floating mb-3">
-            <textarea
-              className="form-control"
-              placeholder="Enter your bio"
-              id="bio"
-              name="bio"
-              style={{ height: "100px" }}
-              value={formData.bio}
-              onChange={handleChange}
-            />
-            <label htmlFor="bio">Bio</label>
-          </div> */}
-
-          {/* Checkbox */}
-          {/* <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="checkbox"
-              name="checkbox"
-              checked={formData.checkbox}
-              onChange={handleChange}
-            />
-            <label className="form-check-label" htmlFor="checkbox">
-              Default checkbox
-            </label>
-          </div> */}
-
-          {/* Radio */}
           <div className="mb-3">
-            <div className="form-check form-check-inline">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="gender"
-                value="male"
-                checked={formData.gender === "male"}
-                onChange={handleChange}
-              />
-              <label className="form-check-label">Male</label>
-            </div>
+            <label className="form-label fw-semibold">Gender</label>
+            <div>
+              <div className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={formData.gender === "male"}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label">Male</label>
+              </div>
 
-            <div className="form-check form-check-inline">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="gender"
-                value="female"
-                checked={formData.gender === "female"}
-                onChange={handleChange}
-              />
-              <label className="form-check-label">Female</label>
+              <div className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={formData.gender === "female"}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label">Female</label>
+              </div>
             </div>
           </div>
 
-          {/* Switch */}
-          <div className="form-check form-switch mb-3">
+          <div className="form-check form-switch mb-4">
             <input
               className="form-check-input"
               type="checkbox"
@@ -139,16 +112,14 @@ const Profile = () => {
               onChange={handleChange}
             />
             <label className="form-check-label" htmlFor="switch">
-              Enable notifications
+              Enable Notifications
             </label>
           </div>
-
-          {/* Submit */}
           <button
             type="submit"
-            className="btn btn-lg btn-dark text-uppercase w-100 rounded-3 fw-bold"
+            className="btn btn-lg gradient-btn text-white text-uppercase w-100 rounded-pill"
           >
-            Submit
+            Update Profile
           </button>
 
         </form>

@@ -384,7 +384,7 @@ html {
 .form-select {
   padding: 15px;
   border-radius: 10px;
-  background: transparent;
+  background: var(--bs-gray-600);
   border-color: rgba(0, 0, 0, 0.2);
   color: var(--bs-dark);
 }
@@ -553,7 +553,6 @@ option {
   display: none;
 }
 
-/* Only when Bootstrap adds .show */
 .navbar-nav .dropdown-menu.show {
   display: flex !important;
   flex-direction: row;
@@ -564,7 +563,6 @@ option {
   white-space: nowrap;
 }
 
-/* Make items inline */
 .navbar-nav .dropdown-menu .dropdown-item {
   display: inline-block;
   width: auto;
@@ -586,12 +584,11 @@ option {
   }
 }
 
-.upload-card {
-  border: 2px dashed #ddd;
-  transition: all 0.3s ease;
+.gradient-btn {
+  background: linear-gradient(45deg, #000000, #444444);
+  border: none;
 }
 
-.upload-card:hover {
-  border-color: #000;
-  background-color: #f8f9fa;
+.gradient-btn:hover {
+  opacity: 0.9;
 }

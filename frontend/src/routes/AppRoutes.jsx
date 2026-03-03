@@ -21,6 +21,7 @@ import AdminProtectedRoute from "./ProtectedRoute";
 import Profile from "../admin/pages/AdminProfile";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
+import Setting from "../admin/pages/Settings";
 
 const AppRoutes = () => {
   return (
@@ -56,6 +57,7 @@ const AppRoutes = () => {
           <Route path="products" element={<AdminProducts />} />
           <Route path="users" element={<Users />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Setting />} />
         </Route>
       </Route>
 
