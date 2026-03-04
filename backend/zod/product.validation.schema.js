@@ -1,7 +1,7 @@
-import { z } from "zod";
-import mongoose from "mongoose";
+const {z} = require("zod");
+const mongoose = require("mongoose")
 
-export const productSchemaZod = z.object({
+const productSchemaZod = z.object({
   name: z
     .string()
     .trim()
@@ -102,3 +102,18 @@ export const productSchemaZod = z.object({
     .boolean()
     .default(true),
 });
+
+
+const calculatePriceSchema = z.object({
+  items: z.array(
+    z.object({
+      productSku: z.string().min(1),
+      metal: z.enum(["14", "18", "22"]),
+      diamondQuality: z.enum(["IJ_SI", "GH_SI", "GH_VS", "EF_VVS"]),
+      quantity: z.number().min(1),
+      size: z.number().optional()
+    })
+  )
+});
+
+module.exports = { productSchemaZod, calculatePriceSchema }

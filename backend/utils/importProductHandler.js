@@ -64,6 +64,10 @@ const importProducts = async (filePath) => {
                         carat: parsedDiamond[0]?.carat || 0,
                         quantity: parsedDiamond[0]?.quantity || 0,
                         shape: parsedDiamond[0]?.shape || "",
+                        price_IJ_SI:  parsedDiamond[0]?.price_IJ_SI || "",
+                        price_GH_SI:  parsedDiamond[0]?.price_GH_SI || "",
+                        price_GH_VS:  parsedDiamond[0]?.price_GH_VS || "",
+                        price_EF_VVS:  parsedDiamond[0]?.price_EF_VVS || "",
                     };
                 } catch (err) {
                     console.log("Diamond parse error:", err.message);

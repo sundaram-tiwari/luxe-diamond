@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
 
   subCategory: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:"SubCategory",
+    ref: "SubCategory",
   },
 
   productSku: {
@@ -64,7 +64,20 @@ const productSchema = new mongoose.Schema({
     },
     shape: {
       type: String
-    }
+    },
+    price_IJ_SI: {
+      type: Number
+    },
+    price_GH_SI: {
+      type: Number
+    },
+    price_GH_VS: {
+      type: Number
+    },
+    price_EF_VVS: {
+      type: Number
+    },
+
   },
 
   stone: {
@@ -166,7 +179,7 @@ const productSchema = new mongoose.Schema({
     default: true
   },
 
-  totalReviews:{
+  totalReviews: {
     type: Number
   },
 

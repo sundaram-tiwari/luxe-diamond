@@ -1,6 +1,6 @@
 const express = require('express');
 const upload = require('../middleware/productUploads.middleware');
-const { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails } = require('../controller/product.controller');
+const { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails, calculatePrice } = require('../controller/product.controller');
 const { verifyJWT } = require('../middleware/auth.middleware');
 const {authorizedRole} = require('../middleware/role.middleware');
 
@@ -17,6 +17,8 @@ router.get('/get-products/:category/:productSlug',getProductDetails);
 router.get('/category',getCategory);
 
 router.get('/new-arrivals',newArrivals);
+
+router.post('/calculate-price',verifyJWT,authorizedRole("ADMIN","USERS"),calculatePrice);
 
 
 module.exports = (router);

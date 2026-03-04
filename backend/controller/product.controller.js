@@ -1,8 +1,11 @@
 const { asyncHandler } = require('../utils/asyncHandler');
 const Product = require('../models/product.model');
 const Category = require('../models/category.model');
+const Setting = require('../models/settings.model');
 const { importProducts } = require('../utils/importProductHandler');
 const { generateImageUrl, generateVideoUrl } = require('../utils/productUrlHandler');
+const { calculatePriceSchema } = require('../zod/product.validation.schema');
+const { calculateProductPrice } = require('../utils/calculateProductPrice');
 
 
 const uploadProducts = asyncHandler(async (req, res) => {
@@ -148,12 +151,13 @@ const newArrivals = asyncHandler(async (req, res) => {
 });
 
 const getProducts = asyncHandler(async (req, res) => {
+
     const { categoryName } = req.params;
 
     let products;
     let filter = {};
 
-    if (categoryName) {
+    if (categoryName && categoryName !== "all") {
 
         const categoryDoc = await Category.findOne({ name: categoryName });
 
@@ -167,14 +171,9 @@ const getProducts = asyncHandler(async (req, res) => {
         filter.category = categoryDoc._id;
     }
 
-    if (categoryName == "all") {
-        products = await Product.find()
-            .lean();
-    } else {
-        products = await Product.find(filter)
-            .populate("category", "name")
-            .lean();
-    }
+    products = await Product.find(filter)
+        .populate("category", "name")
+        .lean();
 
     if (!products.length) {
         return res.status(404).json({
@@ -184,6 +183,7 @@ const getProducts = asyncHandler(async (req, res) => {
     }
 
     const updatedProducts = products.map(product => {
+
         const imageUrl = generateImageUrl(product);
 
         const hasImage = imageUrl?.[product.defaultColor]?.length > 0;
@@ -194,10 +194,10 @@ const getProducts = asyncHandler(async (req, res) => {
             videoUrl: generateVideoUrl(product),
             hasImage
         };
+
     });
 
-    const filteredProducts = updatedProducts
-        .filter(product => product.hasImage)
+    const filteredProducts = updatedProducts.filter(product => product.hasImage);
 
     if (!filteredProducts.length) {
         return res.status(404).json({
@@ -213,6 +213,7 @@ const getProducts = asyncHandler(async (req, res) => {
             products: filteredProducts
         }
     });
+
 });
 
 const getProductDetails = asyncHandler(async (req, res) => {
@@ -250,4 +251,85 @@ const getProductDetails = asyncHandler(async (req, res) => {
 
 });
 
-module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails };
+const calculatePrice = asyncHandler(async (req, res) => {
+
+    const validatedData = calculatePriceSchema.parse(req.body);
+    const { items } = validatedData;
+
+    const settings = await Setting.find();
+
+    const formattedSetting = {};
+
+    settings.forEach((item) => {
+        formattedSetting[item.name] = item.value;
+    });
+
+    let cartTotal = 0;
+
+    const cartItems = [];
+
+    for (const item of items) {
+
+        const product = await Product.findOne({
+            productSku: item.productSku
+        });
+
+        if (!product) continue;
+
+        const goldWeight =
+            item.metal === "14"
+                ? product.goldWeight14k
+                : item.metal === "18"
+                    ? product.goldWeight18k
+                    : product.goldWeight22k;
+
+        const goldRate = formattedSetting[`gold_rate_${item.metal}k`] || 0;
+        const goldTotal = goldRate * goldWeight;
+
+        const diamondRate =
+            formattedSetting[`price_${item.diamondQuality}`] || 0;
+
+        const diamondTotal = product.diamond.carat * diamondRate;
+
+        const making = product.makingCharges;
+
+        const subtotal = goldTotal + diamondTotal + making;
+
+        const gst = subtotal * 0.03;
+
+        const total = (subtotal + gst) * item.quantity;
+
+        cartTotal += total;
+
+        cartItems.push({
+            productSku: product.productSku,
+            name: product.name,
+            metal: item.metal,
+            diamondQuality: item.diamondQuality,
+            size: item.size,
+            quantity: item.quantity,
+
+            goldWeight,
+            goldRate,
+            diamondRate,
+
+            goldTotal,
+            diamondTotal,
+            making,
+            gst,
+            total
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Price calculated successfully",
+        data: {
+            items: cartItems,
+            cartTotal
+        }
+    });
+
+});
+
+module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails, calculatePrice };

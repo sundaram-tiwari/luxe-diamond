@@ -29,3 +29,9 @@ export const getProductDetails = async (category,sku) => {
     const response = await axiosInstance.get(`/product/get-products/${category}/${sku}`,);
     return response.data;
 }
+
+export const getCalculatedPrice = async (data) => {
+    const response = await axiosInstance.post(`/product/calculate-price`,data);
+    return response.data;
+}
+

@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { adminLoginSchema, addSettingsSchema } = require("../zod/admin.validation.schema");
 const { generateAccessToken, generateRefreshToken } = require("../utils/tokenHandler");
+const {updateProductBasePrices} = require('../utils/updateProductBasePrice');
 
 const adminLogin = asyncHandler(async (req, res) => {
     const validatedData = adminLoginSchema.parse(req.body);
@@ -76,6 +77,8 @@ const updateSetting  = asyncHandler(async (req, res) => {
         { new: true, upsert: true }
     );
 
+        await updateProductBasePrices();
+
 
     res.status(200).json({
         success: true,
@@ -85,7 +88,6 @@ const updateSetting  = asyncHandler(async (req, res) => {
         }
     });
 });
-
 
 const bulkUpdateSettings = asyncHandler(async (req, res) => {
     const settings = req.body;
@@ -100,9 +102,11 @@ const bulkUpdateSettings = asyncHandler(async (req, res) => {
 
     await Setting.bulkWrite(operations);
 
+    await updateProductBasePrices();
+
     res.status(200).json({
         success: true,
-        message: "Settings updated successfully"
+        message: "Settings updated and product prices recalculated"
     });
 });
 

@@ -10,7 +10,7 @@ router.post('/login',adminLogin);
 
 router.get('/users',verifyJWT,authorizedRole("ADMIN"),getAllUsers);
 
-router.get('/settings',verifyJWT,authorizedRole("ADMIN"),getSettings);
+router.get('/settings',verifyJWT,getSettings);
 
 router.put('/setting',verifyJWT,authorizedRole("ADMIN"),updateSetting );
 

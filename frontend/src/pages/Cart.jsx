@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCart, saveCart } from "../utils/cart";
 import { Link } from "react-router-dom";
+import { getCalculatedPrice } from "../api/product.api";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState(() => getCart());
+  const [cartPrices, setCartPrices] = useState([]);
   const [openIndexes, setOpenIndexes] = useState(cartItems.map((_, i) => i));
 
   const updateQuantity = (index, qty) => {
@@ -20,10 +22,31 @@ const Cart = () => {
     setOpenIndexes((prev) => prev.filter((i) => i !== index));
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.priceAtAddTime * item.quantity,
-    0,
-  );
+  const subtotal = cartPrices.reduce((acc, item) => acc + item.total, 0);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const payload = {
+          items: cartItems.map((item) => ({
+            productSku: item.productSku,
+            metal: item.metal,
+            diamondQuality: item.diamondQuality,
+            size: item.size,
+            quantity: item.quantity,
+          })),
+        };
+
+        console.log(payload)
+        const res = await getCalculatedPrice(payload);
+        setCartPrices(res.data.items);
+      } catch (error) {
+        console.error("Price calculation failed", error);
+      }
+    };
+
+    if (cartItems.length) fetchPrices();
+  }, [cartItems]);
 
   return (
     <div className="container-xl">
@@ -44,6 +67,10 @@ const Cart = () => {
             <div id="cart-table" className="divide-y">
               {cartItems.map((item, index) => (
                 <div key={index} className="cart-item-wrapper py-4">
+                  <div className="cart-price">
+                    ₹{cartPrices[index]?.total?.toFixed(0) || "Calculating..."}
+                  </div>
+
                   <div className="d-flex flex-column flex-md-row align-items-start gap-4">
                     <div className="cart-product-image-wrapper">
                       <img
@@ -78,7 +105,8 @@ const Cart = () => {
                           </select>
 
                           <div className="cart-price">
-                            ₹{item.priceAtAddTime * item.quantity}/-
+                            ₹
+                            {(cartPrices[index]?.total || 0).toFixed(0)}
                           </div>
                         </div>
                       </div>
@@ -90,7 +118,7 @@ const Cart = () => {
                             setOpenIndexes((prev) =>
                               prev.includes(index)
                                 ? prev.filter((i) => i !== index)
-                                : [...prev, index],
+                                : [...prev, index]
                             )
                           }
                         >
@@ -107,7 +135,7 @@ const Cart = () => {
                         {openIndexes.includes(index) && (
                           <div className="spec-details mt-2">
                             <div>
-                              <strong>SKU:</strong> {item.sku}
+                              <strong>SKU:</strong> {item.productSku}
                             </div>
                             {item.size && (
                               <div>
@@ -115,10 +143,11 @@ const Cart = () => {
                               </div>
                             )}
                             <div>
-                              <strong>Metal:</strong> {item.metal}
+                              <strong>Metal:</strong> {item.metal}K
                             </div>
                             <div>
-                              <strong>Diamond:</strong> {item.diamond}
+                              <strong>Diamond Quality:</strong>{" "}
+                              {item.diamondQuality}
                             </div>
                           </div>
                         )}
@@ -141,7 +170,7 @@ const Cart = () => {
                 <img
                   src="/assets/img/diamond.png"
                   alt="Empty Cart"
-                  style={{  opacity: "1" }}
+                  style={{ opacity: "0.6" }}
                 />
               </div>
 
@@ -167,14 +196,14 @@ const Cart = () => {
               <div className="flex-grow-1 w-100 d-flex flex-column gap-2">
                 <div className="d-flex justify-content-between text-gray-800-dark">
                   <span>Subtotal ({cartItems.length} Items)</span>
-                  <span>₹{subtotal}/-</span>
+                  <span>₹{subtotal.toFixed(0)}/-</span>
                 </div>
 
                 <div className="divide my-3"></div>
 
                 <div className="d-flex justify-content-between text-black font-semibold">
                   <h3>Total</h3>
-                  <span>₹{subtotal}/-</span>
+                  <span>₹{subtotal.toFixed(0)}/-</span>
                 </div>
 
                 <div className="row m-0 p-0 justify-content-end align-items-center mt-3">

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getProductDetails } from "../../api/product.api";
 import Loader from "../../components/common/Loader";
 import { addToCart } from "../../utils/cart";
+import { getSettings } from "../../api/admin.api";
 
 export default function ProductDetails() {
   const { category, productSlug } = useParams();
@@ -12,10 +13,20 @@ export default function ProductDetails() {
 
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedMetal, setSelectedMetal] = useState("14");
-  const [selectedDiamond, setSelectedDiamond] = useState("IJ-SI");
+  const [selectedDiamond, setSelectedDiamond] = useState("IJ_SI");
   const [selectedSize, setSelectedSize] = useState();
   const [isSizeOpen, setIsSizeOpen] = useState(false);
   const [sizes, setSizes] = useState([]);
+
+  const [settings, setSettings] = useState({});
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const settingsRes = await getSettings();
+      setSettings(settingsRes.data.formattedSetting);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -23,6 +34,14 @@ export default function ProductDetails() {
         setLoading(true);
         const res = await getProductDetails(category, productSlug);
         const data = res.data.product;
+
+        const metals = [
+          data.goldWeight14k > 0 && "14",
+          data.goldWeight18k > 0 && "18",
+          data.goldWeight22k > 0 && "22",
+        ].filter(Boolean);
+
+        setSelectedMetal(metals[0]);
 
         setProduct(data);
 
@@ -42,19 +61,11 @@ export default function ProductDetails() {
   if (loading) return <Loader />;
   if (!product) return null;
 
-  const rawMedia = product.imageUrl?.[selectedColor] || [];
-
-  const isVideo = (file) => file?.endsWith(".mp4");
-
-  const videos = rawMedia.filter((file) => isVideo(file));
-
-  const modelImages = rawMedia.filter((file) => file.includes("_Model_"));
-
-  const normalImages = rawMedia.filter(
-    (file) => !isVideo(file) && !file.includes("_Model_"),
-  );
-
-  const mediaList = [...videos, ...normalImages, ...modelImages];
+  const availableMetals = [
+    product.goldWeight14k > 0 && "14",
+    product.goldWeight18k > 0 && "18",
+    product.goldWeight22k > 0 && "22",
+  ].filter(Boolean);
 
   const goldWeight =
     selectedMetal === "14"
@@ -63,15 +74,44 @@ export default function ProductDetails() {
         ? product.goldWeight18k
         : product.goldWeight22k;
 
-  const goldPricePerGram =
-    selectedMetal === "14" ? 6000 : selectedMetal === "18" ? 7500 : 9000;
+  const rawMedia = product.imageUrl?.[selectedColor] || [];
+  const isVideo = (file) => file?.endsWith(".mp4");
+  const videos = rawMedia.filter((file) => isVideo(file));
+  const modelImages = rawMedia.filter((file) => file.includes("_Model_"));
+  const normalImages = rawMedia.filter(
+    (file) => !isVideo(file) && !file.includes("_Model_"),
+  );
+  const mediaList = [...videos, ...normalImages, ...modelImages];
 
+  const goldPricePerGram = settings?.[`gold_rate_${selectedMetal}k`] || 0;
   const goldTotal = goldWeight * goldPricePerGram;
-  const diamondTotal = product.diamond.carat * 80000;
+
+  let diamondTotal = 0;
+
+  if (
+    product.diamond?.price_IJ_SI ||
+    product.diamond?.price_GH_SI ||
+    product.diamond?.price_GH_VS ||
+    product.diamond?.price_EF_VVS
+  ) {
+    diamondTotal =
+      product.diamond.price_IJ_SI ||
+      product.diamond.price_GH_SI ||
+      product.diamond.price_GH_VS ||
+      product.diamond.price_EF_VVS;
+  } else {
+    const diamondRate = settings?.[`price_${selectedDiamond}`] || 0;
+
+    diamondTotal =
+      product.diamond.carat * diamondRate * (product.diamond.quantity || 1);
+  }
+
   const making = product.makingCharges;
 
   const subtotal = goldTotal + diamondTotal + making;
+
   const gst = subtotal * 0.03;
+
   const total = subtotal + gst;
 
   return (
@@ -125,7 +165,7 @@ export default function ProductDetails() {
               </div>
 
               <div className="d-flex gap-3 overflow-auto scrollbar-none">
-                {["14", "18", "22"].map((crt) => (
+                {availableMetals.map((crt) => (
                   <label key={crt} className="custom-check-label">
                     <input
                       type="radio"
@@ -173,7 +213,7 @@ export default function ProductDetails() {
               </div>
 
               <div className="d-flex gap-3 overflow-auto scrollbar-none">
-                {["IJ-SI", "GH-SI", "GH-VS", "EF-VVS"].map((quality) => (
+                {["IJ_SI", "GH_SI", "GH_VS", "EF_VVS"].map((quality) => (
                   <label key={quality} className="custom-check-label">
                     <input
                       type="radio"
@@ -221,7 +261,10 @@ export default function ProductDetails() {
                   <div className="dropdown shadow-sm position-absolute w-100 bg-white rounded-3">
                     <div className="dropdown-body">
                       {sizes.map((size) => (
-                        <label key={size} className="custom-check-label px-4">
+                        <label
+                          key={size}
+                          className="custom-check-label px-2 py-2"
+                        >
                           <input
                             type="radio"
                             className="custom-check"
@@ -247,7 +290,13 @@ export default function ProductDetails() {
             <button
               className="btn btn-dark w-100 py-2"
               onClick={() => {
-                addToCart(product, selectedColor, selectedSize);
+                addToCart(
+                  product,
+                  selectedColor,
+                  selectedSize,
+                  selectedMetal,
+                  selectedDiamond,
+                );
                 alert("Added to cart");
               }}
             >
