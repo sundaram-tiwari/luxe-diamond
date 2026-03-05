@@ -10,6 +10,11 @@ export const getAllProducts = async () => {
     return response.data;
 }
 
+export const deleteProduct = async (productSku) => {
+    const response = await axiosInstance.delete(`/product/delete-product/${productSku}`);
+    return response.data;
+}
+
 export const getCategory = async () => {
     const response = await axiosInstance.get('/product/category');
     return response.data;

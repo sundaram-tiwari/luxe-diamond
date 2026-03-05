@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllProducts } from "../../../api/product.api";
+import { deleteProduct, getAllProducts } from "../../../api/product.api";
 
 export default function CsvDataTable() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +41,24 @@ export default function CsvDataTable() {
     setCurrentPage(page);
   };
 
+  const handleProductDelete = async (productSku) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteProduct(productSku);
+
+      alert("Product deleted successfully");
+      setProducts((prev) => prev.filter((p) => p.productSku !== productSku));
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete product");
+    }
+  };
+
   return (
     <>
       <div className="table-responsive">
@@ -76,7 +94,11 @@ export default function CsvDataTable() {
                   <td>{row.quantity || "-"}</td>
                   <td>{row.active ? "Yes" : "No"}</td>
                   <td>
-                    <button className="cursor-pointer fa-solid fa-trash bg-transparent border-0"></button>
+                    <button
+                      className="fa-solid fa-trash text-danger bg-transparent border-0"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleProductDelete(row.productSku)}
+                    ></button>
                   </td>
                 </tr>
               ))

@@ -17,7 +17,7 @@ import Dashboard from "../admin/pages/Dashboard";
 import AdminProducts from "../admin/pages/Products";
 import Users from "../admin/pages/Users";
 import AdminLogin from "../admin/pages/AdminLogin";
-import AdminProtectedRoute from "./ProtectedRoute";
+import AdminProtectedRoute, { UserProtectedRoute } from "./ProtectedRoute";
 import Profile from "../admin/pages/AdminProfile";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
@@ -26,12 +26,18 @@ import Setting from "../admin/pages/Settings";
 const AppRoutes = () => {
   return (
     <Routes>
-
-     {/* Public routess */}
+      {/* Public routess */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Landing />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/checkout"
+          element={
+            <UserProtectedRoute>
+              <Checkout />
+            </UserProtectedRoute>
+          }
+        />
         <Route path="/product" element={<Products />} />
         <Route path="/product/:category" element={<Products />} />
         <Route
@@ -44,7 +50,10 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/email-verification-sent" element={<EmailVerificationSent />} />
+      <Route
+        path="/email-verification-sent"
+        element={<EmailVerificationSent />}
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -62,7 +71,6 @@ const AppRoutes = () => {
       </Route>
 
       <Route path="*" element={<NotFound />} />
-
     </Routes>
   );
 };

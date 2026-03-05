@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getCart } from "../utils/cart";
+import { getCalculatedPrice } from "../api/product.api";
 
 const Checkout = () => {
   const [cartItems] = useState(() => getCart());
+  const [priceData, setPriceData] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
 
   const [billing, setBilling] = useState({
     firstName: "",
@@ -15,10 +18,30 @@ const Checkout = () => {
     phone: "",
   });
 
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.qty,
-    0,
-  );
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const payload = {
+          items: cartItems.map((item) => ({
+            productSku: item.productSku,
+            metal: item.metal,
+            diamondQuality: item.diamondQuality,
+            size: item.size ? Number(item.size) : 12,
+            quantity: item.qty ? Number(item.qty) : 1,
+          })),
+        };
+
+        const res = await getCalculatedPrice(payload);
+
+        setPriceData(res.data.items);
+        setCartTotal(res.data.cartTotal);
+      } catch (error) {
+        console.log("Price calculation failed", error);
+      }
+    };
+
+    if (cartItems.length) fetchPrices();
+  }, [cartItems]);
 
   const handleChange = (e) => {
     setBilling({ ...billing, [e.target.name]: e.target.value });
@@ -30,7 +53,7 @@ const Checkout = () => {
         <div className="col-lg-7 mb-4">
           <h4 className="mb-3">Where should we send your order?</h4>
 
-          <div className=" bg-light bg-white border rounded-3 p-3">
+          <div className="bg-white border rounded-3 p-3">
             <div className="row">
               <div className="col-12 mb-3">
                 <label className="form-label">First Name</label>
@@ -41,7 +64,7 @@ const Checkout = () => {
                   placeholder="First Name"
                   value={billing.firstName}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-12 mb-3">
@@ -53,7 +76,7 @@ const Checkout = () => {
                   name="lastName"
                   value={billing.lastName}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-12 mb-3">
@@ -65,7 +88,7 @@ const Checkout = () => {
                   name="email"
                   value={billing.email}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-12 mb-3">
@@ -77,7 +100,7 @@ const Checkout = () => {
                   name="address"
                   value={billing.address}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-12 mb-3">
@@ -89,7 +112,7 @@ const Checkout = () => {
                   name="state"
                   value={billing.state}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-md-6 mb-3">
@@ -101,7 +124,7 @@ const Checkout = () => {
                   name="city"
                   value={billing.city}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-md-6 mb-3">
@@ -113,7 +136,7 @@ const Checkout = () => {
                   name="pincode"
                   value={billing.pincode}
                   onChange={handleChange}
-                  />
+                />
               </div>
 
               <div className="col-12 mb-3">
@@ -137,50 +160,54 @@ const Checkout = () => {
 
         <div className="col-lg-5">
           <div className="bg-white border rounded-3 p-3 mb-4 mt-5">
-            {cartItems.map((item) => (
-              <div key={item.id} className="d-flex mb-4">
-                <div className="position-relative me-3">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    width="80"
-                    className="rounded"
-                  />
-                  <span className="position-absolute top-0 start-100 translate-middle badge bg-dark rounded-pill">
-                    {item.qty}
-                  </span>
-                </div>
+            {priceData.map((item) => {
+              const cartItem = cartItems.find(
+                (p) => p.productSku === item.productSku,
+              );
 
-                <div className="flex-grow-1">
-                  <div className="d-flex justify-content-between">
-                    <span className="fw-medium">{item.name}</span>
-                    <span>₹ {item.price}</span>
+              return (
+                <div key={item.productSku} className="d-flex mb-4">
+                  <div className="cart-image-wrapper position-relative me-3 mt-2">
+                    <div className="cart-image-wrapper">
+                      <img src={cartItem?.image} alt={item.name} />
+                      <div className="item-qty">{item.quantity}</div>
+                    </div>
                   </div>
 
-                  <div className="small text-muted mt-1">
-                    <div>
-                      <strong>Metal:</strong> {item.metal}
+                  <div className="flex-grow-1">
+                    <div className="d-flex justify-content-between">
+                      <span className="fw-medium">{item.name}</span>
+                      <span>₹ {item.unitPrice.toLocaleString()}</span>
                     </div>
-                    <div>
-                      <strong>Color:</strong> {item.color}
-                    </div>
-                    <div>
-                      <strong>Diamond Quality:</strong> {item.diamondQuality}
-                    </div>
-                    <div>
-                      <strong>Size:</strong> {item.size}
+
+                    <div className="small text-muted mt-1">
+                      <div>
+                        <strong>Metal:</strong> {item.metal}K Gold
+                      </div>
+
+                      <div>
+                        <strong>Color:</strong> {cartItem?.color}
+                      </div>
+
+                      <div>
+                        <strong>Diamond Quality:</strong>{" "}
+                        {item.diamondQuality.replace("_", " ")}
+                      </div>
+
+                      <div>
+                        <strong>Size:</strong> {item.size}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Summary Card */}
           <div className="bg-white border rounded-3 p-3">
             <div className="d-flex justify-content-between mb-2">
               <span>Cart Subtotal</span>
-              <span>₹ {subtotal}</span>
+              <span>₹ {cartTotal}</span>
             </div>
 
             <div className="d-flex justify-content-between mb-2">
@@ -192,7 +219,7 @@ const Checkout = () => {
 
             <div className="d-flex justify-content-between fw-bold fs-5">
               <span>Total</span>
-              <span>₹ {subtotal}</span>
+              <span>₹ {cartTotal}</span>
             </div>
           </div>
 

@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import Loader from "../../components/common/Loader";
 import { login } from "../../api/auth.api";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,7 +38,7 @@ const Login = () => {
       localStorage.setItem("token", token);
       console.log("response log", response.data);
       if (response.data.emailVerified) {
-        navigate("/");
+        navigate(from, { replace: true });
       } else {
         alert(
           "Login Successfull. Your email is not verified. Please verify your email",

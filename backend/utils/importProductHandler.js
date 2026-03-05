@@ -64,13 +64,32 @@ const importProducts = async (filePath) => {
                         carat: parsedDiamond[0]?.carat || 0,
                         quantity: parsedDiamond[0]?.quantity || 0,
                         shape: parsedDiamond[0]?.shape || "",
-                        price_IJ_SI:  parsedDiamond[0]?.price_IJ_SI || "",
-                        price_GH_SI:  parsedDiamond[0]?.price_GH_SI || "",
-                        price_GH_VS:  parsedDiamond[0]?.price_GH_VS || "",
-                        price_EF_VVS:  parsedDiamond[0]?.price_EF_VVS || "",
+                        price_IJ_SI: parsedDiamond[0]?.price_IJ_SI || "",
+                        price_GH_SI: parsedDiamond[0]?.price_GH_SI || "",
+                        price_GH_VS: parsedDiamond[0]?.price_GH_VS || "",
+                        price_EF_VVS: parsedDiamond[0]?.price_EF_VVS || "",
                     };
                 } catch (err) {
                     console.log("Diamond parse error:", err.message);
+                }
+            }
+            let stoneData = null;
+
+            if (row.stone && row.stone !== "NULL" && row.stone.trim() !== "") {
+                try {
+                    const parsedStone = JSON.parse(row.stone);
+
+                    stoneData = {
+                        carat: Number(parsedStone?.[0]?.carat) || 0,
+                        quantity: Number(parsedStone?.[0]?.quantity) || 0,
+                        shape: parsedStone?.[0]?.shape || "",
+                        price: Number(parsedStone?.[0]?.price) || 0,
+                        color: parsedStone?.[0]?.color || "",
+                        type: parsedStone?.[0]?.type || "",
+                    };
+
+                } catch (err) {
+                    console.log("Stone parse error:", err.message);
                 }
             }
 
@@ -91,10 +110,12 @@ const importProducts = async (filePath) => {
 
                 diamond: diamondData,
 
+                stone: stoneData,
+
                 goldWeight22k: Number(row.gold_weight_22k) || 0,
                 goldWeight18k: Number(row.gold_weight_18k) || 0,
                 goldWeight14k: Number(row.gold_weight_14k) || 0,
-                
+
                 makingCharges: Number(row.making_charges),
 
                 quantity: Number(row.quantity) || 1,
@@ -127,4 +148,4 @@ const importProducts = async (filePath) => {
     }
 };
 
-module.exports = {importProducts}
+module.exports = { importProducts }

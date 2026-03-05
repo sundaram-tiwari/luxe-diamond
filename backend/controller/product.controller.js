@@ -4,7 +4,7 @@ const Category = require('../models/category.model');
 const Setting = require('../models/settings.model');
 const { importProducts } = require('../utils/importProductHandler');
 const { generateImageUrl, generateVideoUrl } = require('../utils/productUrlHandler');
-const { calculatePriceSchema } = require('../zod/product.validation.schema');
+const { calculatePriceSchema, deleteProductSchema } = require('../zod/product.validation.schema');
 const { calculateProductPrice } = require('../utils/calculateProductPrice');
 
 
@@ -54,6 +54,18 @@ const getAllProducts = asyncHandler(async (req, res) => {
         }
     });
 });
+
+const deleteProduct = asyncHandler(async (req, res) => {
+    const validatedData = deleteProductSchema.parse(req.params);
+    const { productSku } = validatedData;
+
+    await Product.deleteOne({ productSku: productSku });
+
+    res.status(200).json({
+        success: true,
+        message: "Product deleted successfully",
+    });
+})
 
 const getCategory = asyncHandler(async (req, res) => {
     const category = await Category.find({});
@@ -275,29 +287,14 @@ const calculatePrice = asyncHandler(async (req, res) => {
         });
 
         if (!product) continue;
+        const unitPrice = calculateProductPrice({
+            product,
+            selectedMetal: item.metal,
+            selectedDiamond: item.diamondQuality,
+            settings: formattedSetting
+        });
 
-        const goldWeight =
-            item.metal === "14"
-                ? product.goldWeight14k
-                : item.metal === "18"
-                    ? product.goldWeight18k
-                    : product.goldWeight22k;
-
-        const goldRate = formattedSetting[`gold_rate_${item.metal}k`] || 0;
-        const goldTotal = goldRate * goldWeight;
-
-        const diamondRate =
-            formattedSetting[`price_${item.diamondQuality}`] || 0;
-
-        const diamondTotal = product.diamond.carat * diamondRate;
-
-        const making = product.makingCharges;
-
-        const subtotal = goldTotal + diamondTotal + making;
-
-        const gst = subtotal * 0.03;
-
-        const total = (subtotal + gst) * item.quantity;
+        const total = unitPrice * item.quantity;
 
         cartTotal += total;
 
@@ -308,15 +305,7 @@ const calculatePrice = asyncHandler(async (req, res) => {
             diamondQuality: item.diamondQuality,
             size: item.size,
             quantity: item.quantity,
-
-            goldWeight,
-            goldRate,
-            diamondRate,
-
-            goldTotal,
-            diamondTotal,
-            making,
-            gst,
+            unitPrice,
             total
         });
     }
@@ -332,4 +321,4 @@ const calculatePrice = asyncHandler(async (req, res) => {
 
 });
 
-module.exports = { uploadProducts, getAllProducts, getCategory, newArrivals, getProducts, getProductDetails, calculatePrice };
+module.exports = { uploadProducts, getAllProducts, deleteProduct, getCategory, newArrivals, getProducts, getProductDetails, calculatePrice };

@@ -116,4 +116,12 @@ const calculatePriceSchema = z.object({
   )
 });
 
-module.exports = { productSchemaZod, calculatePriceSchema }
+const deleteProductSchema = z.object({
+    productSku: z
+    .string()
+    .trim()
+    .min(1, "Product SKU is required")
+    .transform((val) => val.toUpperCase()),
+});
+
+module.exports = { productSchemaZod, calculatePriceSchema, deleteProductSchema }

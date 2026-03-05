@@ -32,12 +32,10 @@ const Cart = () => {
             productSku: item.productSku,
             metal: item.metal,
             diamondQuality: item.diamondQuality,
-            size: item.size,
-            quantity: item.quantity,
+            size: item.size ? Number(item.size) : 12,
+            quantity: item.qty ? Number(item.qty) : 1,
           })),
         };
-
-        console.log(payload)
         const res = await getCalculatedPrice(payload);
         setCartPrices(res.data.items);
       } catch (error) {
@@ -105,8 +103,7 @@ const Cart = () => {
                           </select>
 
                           <div className="cart-price">
-                            ₹
-                            {(cartPrices[index]?.total || 0).toFixed(0)}
+                            ₹{(cartPrices[index]?.total || 0).toFixed(0)}
                           </div>
                         </div>
                       </div>
@@ -118,7 +115,7 @@ const Cart = () => {
                             setOpenIndexes((prev) =>
                               prev.includes(index)
                                 ? prev.filter((i) => i !== index)
-                                : [...prev, index]
+                                : [...prev, index],
                             )
                           }
                         >

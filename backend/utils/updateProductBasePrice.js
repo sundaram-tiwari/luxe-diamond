@@ -17,9 +17,9 @@ const updateProductBasePrices = async () => {
   const bulkOperations = products.map((product) => {
 
     const price = calculateProductPrice({
-      goldWeight14k: product.goldWeight14k || 0,
-      diamond: product.diamond,
-      makingCharges: product.makingCharges || 0,
+      product,
+      selectedMetal: "14",     
+      selectedDiamond: "IJ_SI", 
       settings: formattedSettings
     });
 
@@ -37,6 +37,7 @@ const updateProductBasePrices = async () => {
   }
 
   console.log("All product base prices updated");
+
 };
 
 module.exports = { updateProductBasePrices };

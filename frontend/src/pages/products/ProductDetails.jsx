@@ -103,12 +103,17 @@ export default function ProductDetails() {
     const diamondRate = settings?.[`price_${selectedDiamond}`] || 0;
 
     diamondTotal =
-      product.diamond.carat * diamondRate * (product.diamond.quantity || 1);
+      product.diamond.carat * diamondRate;
+  }
+
+  let stonePrice = 0;
+  if (product.stone?.price) {
+    stonePrice = product.stone.price;
   }
 
   const making = product.makingCharges;
 
-  const subtotal = goldTotal + diamondTotal + making;
+  const subtotal = goldTotal + diamondTotal + making + stonePrice;
 
   const gst = subtotal * 0.03;
 
@@ -327,6 +332,12 @@ export default function ProductDetails() {
               <span>₹{diamondTotal.toFixed(0)}</span>
             </div>
 
+            {stonePrice > 0 && (
+              <div className="d-flex justify-content-between">
+                <span>Gemstone ({product.stone?.carat || 0} Ct)</span>
+                <span>₹{stonePrice.toFixed(0)}</span>
+              </div>
+            )}
             <div className="d-flex justify-content-between">
               <span>Making Charges</span>
               <span>₹{making}</span>
