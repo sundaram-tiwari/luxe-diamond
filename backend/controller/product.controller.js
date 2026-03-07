@@ -287,14 +287,14 @@ const calculatePrice = asyncHandler(async (req, res) => {
         });
 
         if (!product) continue;
-        const unitPrice = calculateProductPrice({
+        const pricingDetails = calculateProductPrice({
             product,
             selectedMetal: item.metal,
             selectedDiamond: item.diamondQuality,
             settings: formattedSetting
         });
 
-        const total = unitPrice * item.quantity;
+        const total = pricingDetails.unitPrice * item.quantity;
 
         cartTotal += total;
 
@@ -305,7 +305,8 @@ const calculatePrice = asyncHandler(async (req, res) => {
             diamondQuality: item.diamondQuality,
             size: item.size,
             quantity: item.quantity,
-            unitPrice,
+            unitPrice:pricingDetails.unitPrice,
+            pricingDetails,
             total
         });
     }

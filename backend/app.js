@@ -27,6 +27,7 @@ app.use(
 app.use('/api/v1/auth',require('./routes/auth.routes'));
 app.use('/api/v1/admin',require('./routes/admin.routes'));
 app.use('/api/v1/product',require('./routes/product.routes'));
+app.use('/api/v1/order',require('./routes/order.routes'));
 
 app.use((req, res) => {
   res.status(404).json({

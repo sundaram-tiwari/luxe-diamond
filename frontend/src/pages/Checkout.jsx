@@ -8,8 +8,7 @@ const Checkout = () => {
   const [cartTotal, setCartTotal] = useState(0);
 
   const [billing, setBilling] = useState({
-    firstName: "",
-    lastName: "",
+    receiverName: "",
     email: "",
     address: "",
     state: "",
@@ -56,25 +55,13 @@ const Checkout = () => {
           <div className="bg-white border rounded-3 p-3">
             <div className="row">
               <div className="col-12 mb-3">
-                <label className="form-label">First Name</label>
+                <label className="form-label">Receiver Name</label>
                 <input
                   type="text"
                   className="form-control bg-light"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={billing.firstName}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12 mb-3">
-                <label className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  className="form-control bg-light"
-                  name="lastName"
-                  value={billing.lastName}
+                  name="receiverName"
+                  placeholder="Receiver Name"
+                  value={billing.receiverName}
                   onChange={handleChange}
                 />
               </div>

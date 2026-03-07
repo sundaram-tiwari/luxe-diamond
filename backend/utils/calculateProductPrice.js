@@ -7,12 +7,12 @@ const calculateProductPrice = ({
 
   const goldWeight =
     selectedMetal === "14"
-      ? product.goldWeight14k
+      ? Number(product.goldWeight14k || 0)
       : selectedMetal === "18"
-        ? product.goldWeight18k
-        : product.goldWeight22k;
+        ? Number(product.goldWeight18k || 0)
+        : Number(product.goldWeight22k || 0);
 
-  const goldRate = settings?.[`gold_rate_${selectedMetal}k`] || 0;
+  const goldRate = Number(settings?.[`gold_rate_${selectedMetal}k`] || 0);
 
   const goldTotal = goldWeight * goldRate;
 
@@ -50,7 +50,13 @@ const calculateProductPrice = ({
 
   const total = subtotal + gst;
 
-  return Math.round(total);
+  return ({
+    goldWeight: goldWeight,
+    goldTotal: goldTotal,
+    diamondTotal: diamondTotal,
+    stonePrice: stonePrice,
+    unitPrice: total
+  });
 };
 
 module.exports = { calculateProductPrice };

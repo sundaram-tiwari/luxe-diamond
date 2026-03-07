@@ -1,12 +1,21 @@
-// import React, { useState } from "react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { getCart } from "../../utils/cart";
 
 const Header = () => {
-  // const [megaOpen,setMegaOpen] = useState(false);
   const [cartItems] = useState(() => getCart());
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  // const navigate = useNavigate();
+
+  const [token] = useState(() => {
+    return localStorage.getItem("token");
+  });
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem("token");
+  //   setToken(null);
+  //   navigate("/");
+  // };
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
@@ -139,22 +148,34 @@ const Header = () => {
                     locate <br /> our store
                   </span>
                 </li> */}
-                <li>
-                  <Link
-                    to="/login"
-                    className="text-dark text-decoration-none small"
-                  >
-                    Login
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/signup"
-                    className="text-dark text-decoration-none small"
-                  >
-                    Signup
-                  </Link>
-                </li>
+                {!token ? (
+                  <>
+                    <li>
+                      <Link
+                        to="/login"
+                        className="text-dark text-decoration-none small"
+                      >
+                        Login
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/signup"
+                        className="text-dark text-decoration-none small"
+                      >
+                        Signup
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link to="/profile" className="text-dark fs-5">
+                        <i className="fa-solid fa-user"></i>
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
