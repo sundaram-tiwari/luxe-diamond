@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCart } from "../utils/cart";
 import { getCalculatedPrice } from "../api/product.api";
+import { createOrder } from "../api/order.api";
 
 const Checkout = () => {
   const [cartItems] = useState(() => getCart());
   const [priceData, setPriceData] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
+
+  const [loading, setLoading] = useState(false);
 
   const [billing, setBilling] = useState({
     receiverName: "",
@@ -44,6 +47,47 @@ const Checkout = () => {
 
   const handleChange = (e) => {
     setBilling({ ...billing, [e.target.name]: e.target.value });
+  };
+
+  const handleOrder = async () => {
+    if (!billing.receiverName || !billing.phone || !billing.address) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        items: cartItems.map((item) => ({
+          productSku: item.productSku,
+          metal: item.metal,
+          diamondQuality: item.diamondQuality,
+          size: item.size ? Number(item.size) : 12,
+          quantity: item.qty ? Number(item.qty) : 1,
+        })),
+
+        address: {
+          receiverName: billing.receiverName,
+          phone: billing.phone,
+          addressLine1: billing.address,
+          city: billing.city,
+          state: billing.state,
+          pincode: billing.pincode,
+        },
+      };
+
+      const res = await createOrder(payload);
+
+      console.log("Order created:", res.data);
+      localStorage.removeItem("cart");
+      alert("Order created successfully");
+    } catch (error) {
+      console.error("Order failed:", error);
+      alert("Order failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -140,8 +184,12 @@ const Checkout = () => {
             </div>
           </div>
 
-          <button className="btn btn-dark w-100 mt-4 py-2">
-            Proceed to Payment
+          <button
+            className="btn btn-dark w-100 mt-4 py-2"
+            onClick={handleOrder}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Proceed to Payment"}
           </button>
         </div>
 
@@ -164,12 +212,19 @@ const Checkout = () => {
                   <div className="flex-grow-1">
                     <div className="d-flex justify-content-between">
                       <span className="fw-medium">{item.name}</span>
-                      <span>₹ {item.unitPrice.toLocaleString()}</span>
+                      <span>
+                        ₹{" "}
+                        {(
+                          (item?.metal?.price || 0) +
+                          (item?.diamond?.price || 0) +
+                          (item?.stonePrice || 0)
+                        ).toLocaleString()}
+                      </span>
                     </div>
 
                     <div className="small text-muted mt-1">
                       <div>
-                        <strong>Metal:</strong> {item.metal}K Gold
+                        <strong>Metal:</strong> {item?.metal?.quality}K Gold
                       </div>
 
                       <div>
@@ -178,7 +233,7 @@ const Checkout = () => {
 
                       <div>
                         <strong>Diamond Quality:</strong>{" "}
-                        {item.diamondQuality.replace("_", " ")}
+                        {item?.diamond?.type?.replace("_", " ") || "N/A"}
                       </div>
 
                       <div>

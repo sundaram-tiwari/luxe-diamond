@@ -20,7 +20,7 @@ router.get('/category',getCategory);
 
 router.get('/new-arrivals',newArrivals);
 
-router.post('/calculate-price',calculatePrice);
+router.post('/calculate-price',verifyJWT,calculatePrice);
 
 
 module.exports = (router);

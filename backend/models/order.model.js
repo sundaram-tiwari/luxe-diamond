@@ -1,70 +1,62 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+const diamondSchema = new mongoose.Schema(
+  {
+    carat: Number,
+    type: String,
+    price: Number
+  },
+  { _id: false }
+);
+
+const metalSchema = new mongoose.Schema(
+  {
+    quality: String,
+    weight: Number,
+    price: Number
+  },
+  { _id: false }
+);
+
+const orderItemSchema = new mongoose.Schema(
+  {
+    productSku: String,
+    name: String,
+    size: Number,
+    metal: metalSchema,
+    diamond: diamondSchema,
+    stonePrice: Number,
+    quantity: Number
+  },
+  { _id: false }
+);
 
 const orderSchema = new mongoose.Schema({
-    items: [{
-        name: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        slug: {
-            type: String,
-            unique: true,
-            required: true,
-            lowercase: true,
-            trim: true
-        },
-        size: {
-            type: Number,
-            required: true,
-        },
-        metal: {
-            quality: {
-                type: String,
-                required: true
-            },
-            weight: {
-                type: Number,
-                required: true
-            },
-            price: {
-                type: Number,
-                required: true
-            }
-        },
-        diamond: {
-            carat: {
-                type: Number
-            },
-            type: {
-                type: String
-            },
-            price: {
-                type: Number
-            },
-        },
-        stonePrice: {
-            type: Number
-        },
-        quantity: {
-            type: Number
-        },
-    }],
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
-    address: {
-        receiverName: String,
-        phone: String,
-        addressLine1: String,
-        addressLine2: String,
-        city: String,
-        state: String,
-        pincode: String,
-        country: {
-            type: String,
-            default: "India"
-        }
+  items: [orderItemSchema],
+
+  orderTotal: {
+    type: Number,
+    required: true
+  },
+
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+
+  address: {
+    receiverName: String,
+    phone: String,
+    addressLine1: String,
+    city: String,
+    state: String,
+    pincode: String,
+    country: {
+      type: String,
+      default: "India"
     }
-})
+  }
+});
+
+module.exports =
+  mongoose.models.Order || mongoose.model("Order", orderSchema);

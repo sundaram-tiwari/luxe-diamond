@@ -271,13 +271,11 @@ const calculatePrice = asyncHandler(async (req, res) => {
     const settings = await Setting.find();
 
     const formattedSetting = {};
-
     settings.forEach((item) => {
         formattedSetting[item.name] = item.value;
     });
 
     let cartTotal = 0;
-
     const cartItems = [];
 
     for (const item of items) {
@@ -287,6 +285,7 @@ const calculatePrice = asyncHandler(async (req, res) => {
         });
 
         if (!product) continue;
+
         const pricingDetails = calculateProductPrice({
             product,
             selectedMetal: item.metal,
@@ -295,19 +294,25 @@ const calculatePrice = asyncHandler(async (req, res) => {
         });
 
         const total = pricingDetails.unitPrice * item.quantity;
-
         cartTotal += total;
 
         cartItems.push({
             productSku: product.productSku,
             name: product.name,
-            metal: item.metal,
-            diamondQuality: item.diamondQuality,
-            size: item.size,
+            metal: {
+                quality: item.metal,
+                weight: pricingDetails.goldWeight,
+                price: pricingDetails.goldTotal,
+                // color: product.metalColor || "white" 
+            },
+            diamond: {
+                carat: product.diamondCarat || 0, // adjust based on your schema
+                type: item.diamondQuality,
+                price: pricingDetails.diamondTotal
+            },
+            stonePrice: pricingDetails.stonePrice || 0,
             quantity: item.quantity,
-            unitPrice:pricingDetails.unitPrice,
-            pricingDetails,
-            total
+            size: item.size
         });
     }
 

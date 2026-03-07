@@ -22,7 +22,16 @@ const Cart = () => {
     setOpenIndexes((prev) => prev.filter((i) => i !== index));
   };
 
-  const subtotal = cartPrices.reduce((acc, item) => acc + item.total, 0);
+  const subtotal = cartPrices.reduce(
+    (acc, item) =>
+      acc +
+      ((item?.metal?.price || 0) +
+        (item?.diamond?.price || 0) +
+        (item?.stonePrice || 0)) *
+        (item?.quantity || 1),
+    0,
+  );
+
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -65,10 +74,13 @@ const Cart = () => {
             <div id="cart-table" className="divide-y">
               {cartItems.map((item, index) => (
                 <div key={index} className="cart-item-wrapper py-4">
-                  <div className="cart-price">
-                    ₹{cartPrices[index]?.total?.toFixed(0) || "Calculating..."}
-                  </div>
-
+                  ₹
+                  {(
+                    ((cartPrices[index]?.metal?.price || 0) +
+                      (cartPrices[index]?.diamond?.price || 0) +
+                      (cartPrices[index]?.stonePrice || 0)) *
+                    (cartPrices[index]?.quantity || 1)
+                  ).toFixed(0) || "Calculating..."}
                   <div className="d-flex flex-column flex-md-row align-items-start gap-4">
                     <div className="cart-product-image-wrapper">
                       <img
@@ -103,7 +115,13 @@ const Cart = () => {
                           </select>
 
                           <div className="cart-price">
-                            ₹{(cartPrices[index]?.total || 0).toFixed(0)}
+                            ₹
+                            {(
+                              ((cartPrices[index]?.metal?.price || 0) +
+                                (cartPrices[index]?.diamond?.price || 0) +
+                                (cartPrices[index]?.stonePrice || 0)) *
+                              (cartPrices[index]?.quantity || 1)
+                            ).toFixed(0)}
                           </div>
                         </div>
                       </div>

@@ -32,7 +32,7 @@ const AdminLogin = () => {
       localStorage.setItem("email", formData.email);
       JSON.stringify(response);
       let token = response.data.token;
-      localStorage.setItem("token", token);
+      localStorage.setItem("adminToken", token);
       console.log("response log", response.data);
       if (response.data.emailVerified) {
         navigate("/admin/dashboard");
