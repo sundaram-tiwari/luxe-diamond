@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Profile = () => {
+const AdminProfile = () => {
   const [formData, setFormData] = useState({
     name: "Admin",
     email: "admin@luxediamond.com",
@@ -128,4 +128,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AdminProfile;

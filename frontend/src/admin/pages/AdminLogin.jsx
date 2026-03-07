@@ -31,8 +31,8 @@ const AdminLogin = () => {
       const response = await adminLogin(formData);
       localStorage.setItem("email", formData.email);
       JSON.stringify(response);
-      let token = response.data.token;
-      localStorage.setItem("adminToken", token);
+      let adminToken = response.data.token;
+      localStorage.setItem("adminToken", adminToken);
       console.log("response log", response.data);
       if (response.data.emailVerified) {
         navigate("/admin/dashboard");

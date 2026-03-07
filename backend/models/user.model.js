@@ -4,7 +4,6 @@ const addressSchema = new mongoose.Schema({
     receiverName: String,
     phone: String,
     addressLine1: String,
-    addressLine2: String,
     city: String,
     state: String,
     pincode: String,

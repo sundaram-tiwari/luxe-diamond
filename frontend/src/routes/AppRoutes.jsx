@@ -18,10 +18,11 @@ import AdminProducts from "../admin/pages/Products";
 import Users from "../admin/pages/Users";
 import AdminLogin from "../admin/pages/AdminLogin";
 import AdminProtectedRoute, { UserProtectedRoute } from "./ProtectedRoute";
-import Profile from "../admin/pages/AdminProfile";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import Setting from "../admin/pages/Settings";
+import OrderSuccess from "../pages/OrderSuccess";
+import Profile from "../pages/auth/Profile";
 
 const AppRoutes = () => {
   return (
@@ -35,6 +36,22 @@ const AppRoutes = () => {
           element={
             <UserProtectedRoute>
               <Checkout />
+            </UserProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <UserProtectedRoute>
+              <Profile />
+            </UserProtectedRoute>
+          }
+        />
+        <Route
+          path="/order-success"
+          element={
+            <UserProtectedRoute>
+              <OrderSuccess />
             </UserProtectedRoute>
           }
         />

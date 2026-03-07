@@ -18,6 +18,10 @@ const getAllUsers = asyncHandler(async (req,res) => {
             users
         }
     });
-})
+});
 
-module.exports = {getAllUsers}
+const getUser = asyncHandler(async (req,res) => {
+
+});
+
+module.exports = {getAllUsers, getUser}

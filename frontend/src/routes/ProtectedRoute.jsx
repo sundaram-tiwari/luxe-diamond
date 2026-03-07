@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const AdminProtectedRoute = () => {
-  const token = localStorage.getItem("token");
+  const adminToken = localStorage.getItem("adminToken");
 
-  return token ? <Outlet /> : <Navigate to="/admin/login" replace />;
+  return adminToken ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
 
 export const UserProtectedRoute = ({children}) => {

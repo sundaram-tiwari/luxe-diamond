@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getProductDetails } from "../../api/product.api";
 import Loader from "../../components/common/Loader";
 import { addToCart } from "../../utils/cart";
-import { getSettings } from "../../api/admin.api";
+import { getSettings } from "../../api/product.api";
 
 export default function ProductDetails() {
   const { category, productSlug } = useParams();

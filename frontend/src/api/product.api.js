@@ -1,20 +1,5 @@
 import axiosInstance from "../utils/axiosInstance"
 
-export const uploadProducts = async (data) => {
-    const response = await axiosInstance.post('/product/upload-product', data);
-    return response.data;
-}
-
-export const getAllProducts = async () => {
-    const response = await axiosInstance.get('/product/get-all-products');
-    return response.data;
-}
-
-export const deleteProduct = async (productSku) => {
-    const response = await axiosInstance.delete(`/product/delete-product/${productSku}`);
-    return response.data;
-}
-
 export const getCategory = async () => {
     const response = await axiosInstance.get('/product/category');
     return response.data;
@@ -40,3 +25,7 @@ export const getCalculatedPrice = async (data) => {
     return response.data;
 }
 
+export const getSettings = async () => {
+    const response = await axiosInstance.get('/admin/settings');
+    return response.data;
+}

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { getSettings, updateSettings } from "../../api/admin.api";
+import {updateSettings } from "../../api/admin.api";
+import {getSettings } from "../../api/product.api";
 import Loader from "../../components/common/Loader";
+import { useNavigate } from "react-router-dom";
 
 const Setting = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -13,7 +16,7 @@ const Setting = () => {
     price_GH_SI: "",
     price_GH_VS: "",
     price_EF_VVS: "",
-    making_charges:"",
+    making_charges: "",
   });
 
   const handleChange = (e) => {
@@ -28,6 +31,12 @@ const Setting = () => {
       try {
         setLoading(true);
         const res = await getSettings();
+
+        // if (!res.data.success) {
+        //   alert(res.data.message);
+        //   return;
+        // }
+
         const data = res.data.formattedSetting;
 
         setFormData({
@@ -41,14 +50,18 @@ const Setting = () => {
           making_charges: data.making_charges || "",
         });
       } catch (error) {
-        console.log(error);
+        if (error.response?.data?.message === "Access denied") {
+          navigate("/admin/login");
+        } else {
+          console.log(error);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchSettings();
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +82,7 @@ const Setting = () => {
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   return (
     <>

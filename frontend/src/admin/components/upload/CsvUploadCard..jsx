@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { uploadProducts } from "../../../api/product.api";
+import { uploadProducts } from "../../../api/admin.api";
 
 export default function CsvUploadCard() {
   const [file, setFile] = useState(null);

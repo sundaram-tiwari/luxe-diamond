@@ -1,6 +1,7 @@
 const Product = require("../models/product.model");
 const Order = require("../models/order.model");
 const Setting = require("../models/settings.model");
+const User = require("../models/user.model");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { createUserOrderSchema } = require("../zod/order.validation");
 const { calculateProductPrice } = require("../utils/calculateProductPrice");
@@ -73,13 +74,21 @@ const createUserOrder = asyncHandler(async (req, res) => {
 
         orderItems.push(orderItem);
     }
-    // console.log(Order.schema.path("items.diamond"));
+
     const order = await Order.create({
         userId: req.user._id,
         items: orderItems,
         address,
         orderTotal
     });
+
+    // ✅ Save address in user profile
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $push: { addresses: address }
+        }
+    );
 
     res.status(201).json({
         success: true,

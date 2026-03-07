@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { getCart } from "../utils/cart";
 import { getCalculatedPrice } from "../api/product.api";
 import { createOrder } from "../api/order.api";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [cartItems] = useState(() => getCart());
   const [priceData, setPriceData] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
+
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
@@ -79,9 +82,14 @@ const Checkout = () => {
 
       const res = await createOrder(payload);
 
-      console.log("Order created:", res.data);
       localStorage.removeItem("cart");
       alert("Order created successfully");
+      console.log(res.data);
+      navigate("/order-success", {
+        state: {
+          order: res.data,
+        },
+      });
     } catch (error) {
       console.error("Order failed:", error);
       alert("Order failed");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { deleteProduct, getAllProducts } from "../../../api/product.api";
+import { deleteProduct, getAllProducts } from "../../../api/admin.api";
 
 export default function CsvDataTable() {
   const [currentPage, setCurrentPage] = useState(1);
