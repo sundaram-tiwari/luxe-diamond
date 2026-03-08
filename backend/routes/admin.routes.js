@@ -16,5 +16,4 @@ router.put('/setting',verifyJWT,authorizedRole("ADMIN"),updateSetting );
 
 router.put('/settings',verifyJWT,authorizedRole("ADMIN"),bulkUpdateSettings );
 
-
 module.exports = (router);

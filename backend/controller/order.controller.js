@@ -12,7 +12,7 @@ const createUserOrder = asyncHandler(async (req, res) => {
     const validatedData = createUserOrderSchema.parse(req.body);
     const { items, address } = validatedData;
 
-    const settings = await Setting.find();
+    const settings = await Setting.find();_
 
     const formattedSetting = {};
     settings.forEach((s) => {
@@ -98,4 +98,21 @@ const createUserOrder = asyncHandler(async (req, res) => {
 
 });
 
-module.exports = { createUserOrder }
+const getAllOrders = asyncHandler(async (req,res) => {
+    const orders = await Order.find({});
+    if(!orders){
+        res.status(404).json({
+            success: false,
+            message: "No order found",
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Orders found",
+        data: {
+            orders
+        }
+    });
+});
+module.exports = { createUserOrder, getAllOrders }

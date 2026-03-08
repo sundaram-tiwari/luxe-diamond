@@ -29,3 +29,8 @@ export const updateSettings = async (data) => {
     const response = await adminAxios.put('/admin/settings',data);
     return response.data;
 }
+
+export const getAllOrders = async () => {
+    const response = await adminAxios.get('/order/get-all-orders');
+    return response.data;
+}

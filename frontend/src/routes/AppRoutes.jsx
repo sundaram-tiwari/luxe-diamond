@@ -23,6 +23,7 @@ import Checkout from "../pages/Checkout";
 import Setting from "../admin/pages/Settings";
 import OrderSuccess from "../pages/OrderSuccess";
 import Profile from "../pages/auth/Profile";
+import Orders from "../admin/pages/Orders";
 
 const AppRoutes = () => {
   return (
@@ -84,6 +85,7 @@ const AppRoutes = () => {
           <Route path="users" element={<Users />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Setting />} />
+          <Route path="orders" element={<Orders/>} />
         </Route>
       </Route>
 
