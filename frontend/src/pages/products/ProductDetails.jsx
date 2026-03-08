@@ -83,8 +83,10 @@ export default function ProductDetails() {
   );
   const mediaList = [...videos, ...normalImages, ...modelImages];
 
-  const goldPricePerGram = settings?.[`gold_rate_${selectedMetal}k`] || 0;
-  const goldTotal = goldWeight * goldPricePerGram;
+  const goldPricePerGram = Number(
+    settings?.[`gold_rate_${selectedMetal}k`] || 0,
+  );
+  const goldTotal = Number(goldWeight) * goldPricePerGram;
 
   let diamondTotal = 0;
 
@@ -102,8 +104,7 @@ export default function ProductDetails() {
   } else {
     const diamondRate = settings?.[`price_${selectedDiamond}`] || 0;
 
-    diamondTotal =
-      product.diamond.carat * diamondRate;
+    diamondTotal = product.diamond.carat * diamondRate;
   }
 
   let stonePrice = 0;
@@ -111,13 +112,11 @@ export default function ProductDetails() {
     stonePrice = product.stone.price;
   }
 
-  const making = product.makingCharges;
-
+  const making = Number(product.makingCharges || 0);
   const subtotal = goldTotal + diamondTotal + making + stonePrice;
 
-  const gst = subtotal * 0.03;
-
-  const total = subtotal + gst;
+  const gst = +(subtotal * 0.03).toFixed(2);
+  const total = +(subtotal + gst).toFixed(2);
 
   return (
     <div className="container py-5 d-flex flex flex-column flex-lg-row justify-content-center align-items-start gap-4 position-relative">
@@ -360,104 +359,3 @@ export default function ProductDetails() {
     </div>
   );
 }
-
-// import { useState } from "react";
-// import { Link } from "react-router-dom";
-
-// const ProductCard = ({ product }) => {
-//   const [activeIndex, setActiveIndex] = useState(0);
-
-//   if (!product) return null;
-
-//   const defaultColor = product.defaultColor;
-
-//   const media = product?.imageUrl?.[defaultColor] || [];
-
-//   const images = media.filter(
-//     (url) =>
-//       (url.endsWith(".webp") ||
-//         url.endsWith(".jpg") ||
-//         url.endsWith(".png")) &&
-//       !url.includes("_Model_")
-//   );
-
-//   const video =
-//     product?.videoUrl?.[defaultColor] ||
-//     media.find((url) => url.endsWith(".mp4"));
-
-//   const imageToShow = images[activeIndex] || images[0];
-
-//   const productUrl = `/product/${product.category?.name}/${product.slug}`;
-
-//   return (
-//     <div className="col-6 col-lg-4 col-xl-3 p-1 p-md-2 m-0">
-//       <div className="product-card h-100">
-//         <div className="image-wrapper position-relative">
-//           <Link to={productUrl} onClick={() => console.log("clicked")} className="product-detail-link d-block">
-//             {imageToShow ? (
-//               <img
-//                 src={imageToShow}
-//                 alt={product.name}
-//                 className="w-100 product-main-image"
-//               />
-//             ) : video ? (
-//               <video
-//                 className="w-100 product-main-image"
-//                 autoPlay
-//                 muted
-//                 loop
-//                 playsInline
-//               >
-//                 <source src={video} type="video/mp4" />
-//               </video>
-//             ) : (
-//               <img
-//                 src="/assets/img/logo.png"
-//                 alt="fallback"
-//                 className="w-100"
-//               />
-//             )}
-//           </Link>
-
-//           {images.length > 1 && (
-//             <div className="image-slider d-none d-sm-flex">
-//               {images.map((_, i) => (
-//                 <div
-//                   key={i}
-//                   onMouseEnter={() => setActiveIndex(i)}
-//                   className="thumb-hover-area"
-//                 />
-//               ))}
-//             </div>
-//           )}
-//         </div>
-
-//         <div className="product-content text-center">
-//           <div className="colors">
-//             {product.color?.map((color, i) => (
-//               <span key={i} className={`${color}-color color-dot`} />
-//             ))}
-//           </div>
-
-//           <Link to={productUrl} className="product-name">
-//             {product.name}
-//           </Link>
-
-//           <div className="product-price">
-//             ₹ {product.productBasePrice}
-//           </div>
-
-//           <div className="add-to-bag-box">
-//             <Link to={productUrl} className="add-to-bag">
-//               Add to Cart
-//             </Link>
-
-//             <div className="vertical-divide"></div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductCard;

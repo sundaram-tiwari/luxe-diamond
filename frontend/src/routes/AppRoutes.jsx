@@ -87,6 +87,8 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
+      {/* User routes */}
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

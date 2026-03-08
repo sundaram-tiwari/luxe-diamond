@@ -22,16 +22,17 @@ const Cart = () => {
     setOpenIndexes((prev) => prev.filter((i) => i !== index));
   };
 
-  const subtotal = cartPrices.reduce(
-    (acc, item) =>
-      acc +
-      ((item?.metal?.price || 0) +
-        (item?.diamond?.price || 0) +
-        (item?.stonePrice || 0)) *
-        (item?.quantity || 1),
-    0,
-  );
+  const subtotal = cartPrices.reduce((acc, item) => {
+    const itemTotal =
+      (item?.metal?.price || 0) +
+      (item?.diamond?.price || 0) +
+      (item?.stonePrice || 0) +
+      (item?.makingCharges || 0);
+    return acc + itemTotal * (item?.quantity || 1);
+  }, 0);
 
+  const gst = subtotal * 0.03;
+  const total = subtotal + gst;
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -42,7 +43,7 @@ const Cart = () => {
             metal: item.metal,
             diamondQuality: item.diamondQuality,
             size: item.size ? Number(item.size) : 12,
-            quantity: item.qty ? Number(item.qty) : 1,
+            quantity: item.quantity || 1,
           })),
         };
         const res = await getCalculatedPrice(payload);
@@ -72,112 +73,109 @@ const Cart = () => {
 
           {cartItems.length > 0 ? (
             <div id="cart-table" className="divide-y">
-              {cartItems.map((item, index) => (
-                <div key={index} className="cart-item-wrapper py-4">
-                  ₹
-                  {(
-                    ((cartPrices[index]?.metal?.price || 0) +
-                      (cartPrices[index]?.diamond?.price || 0) +
-                      (cartPrices[index]?.stonePrice || 0)) *
-                    (cartPrices[index]?.quantity || 1)
-                  ).toFixed(0) || "Calculating..."}
-                  <div className="d-flex flex-column flex-md-row align-items-start gap-4">
-                    <div className="cart-product-image-wrapper">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="cart-product-image"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/assets/img/diamond.png";
-                        }}
-                      />
-                    </div>
+              {cartItems.map((item, index) => {
+                const itemPrice =
+                  ((cartPrices[index]?.metal?.price || 0) +
+                    (cartPrices[index]?.diamond?.price || 0) +
+                    (cartPrices[index]?.stonePrice || 0) +
+                    (cartPrices[index]?.makingCharges || 0)) *
+                  (cartPrices[index]?.quantity || 1);
+                // const itemPriceWithGST = itemPrice * 1.03; // 3% GST
 
-                    <div className="flex-grow-1 w-100">
-                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
-                        <h2 className="cart-title m-0">{item.name}</h2>
-
-                        <div className="d-flex align-items-center gap-4">
-                          <select
-                            className="cart-product-qty"
-                            value={item.quantity}
-                            onChange={(e) =>
-                              updateQuantity(index, e.target.value)
-                            }
-                          >
-                            {[1, 2, 3, 4, 5].map((q) => (
-                              <option key={q} value={q}>
-                                {q}
-                              </option>
-                            ))}
-                          </select>
-
-                          <div className="cart-price">
-                            ₹
-                            {(
-                              ((cartPrices[index]?.metal?.price || 0) +
-                                (cartPrices[index]?.diamond?.price || 0) +
-                                (cartPrices[index]?.stonePrice || 0)) *
-                              (cartPrices[index]?.quantity || 1)
-                            ).toFixed(0)}
-                          </div>
-                        </div>
+                return (
+                  <div key={index} className="cart-item-wrapper py-4">
+                    <div className="d-flex flex-column flex-md-row align-items-start gap-4">
+                      <div className="cart-product-image-wrapper">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="cart-product-image"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/assets/img/diamond.png";
+                          }}
+                        />
                       </div>
 
-                      <div className="mt-3 position-relative">
-                        <div
-                          className="spec-toggle"
-                          onClick={() =>
-                            setOpenIndexes((prev) =>
-                              prev.includes(index)
-                                ? prev.filter((i) => i !== index)
-                                : [...prev, index],
-                            )
-                          }
-                        >
-                          Specifications
-                          <span
-                            className={`arrow ${
-                              openIndexes.includes(index) ? "rotate" : ""
-                            }`}
-                          >
-                            ▼
-                          </span>
-                        </div>
+                      <div className="flex-grow-1 w-100">
+                        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
+                          <h2 className="cart-title m-0">{item.name}</h2>
 
-                        {openIndexes.includes(index) && (
-                          <div className="spec-details mt-2">
-                            <div>
-                              <strong>SKU:</strong> {item.productSku}
-                            </div>
-                            {item.size && (
-                              <div>
-                                <strong>Size:</strong> {item.size}
-                              </div>
-                            )}
-                            <div>
-                              <strong>Metal:</strong> {item.metal}K
-                            </div>
-                            <div>
-                              <strong>Diamond Quality:</strong>{" "}
-                              {item.diamondQuality}
+                          <div className="d-flex align-items-center gap-4">
+                            <select
+                              className="cart-product-qty"
+                              value={item.quantity}
+                              onChange={(e) =>
+                                updateQuantity(index, e.target.value)
+                              }
+                            >
+                              {[1, 2, 3, 4, 5].map((q) => (
+                                <option key={q} value={q}>
+                                  {q}
+                                </option>
+                              ))}
+                            </select>
+
+                            <div className="cart-price">
+                              ₹{itemPrice.toFixed(2)}
                             </div>
                           </div>
-                        )}
+                        </div>
 
-                        <div
-                          className="remove-btn"
-                          onClick={() => removeItem(index)}
-                        >
-                          Remove
+                        <div className="mt-3 position-relative">
+                          <div
+                            className="spec-toggle"
+                            onClick={() =>
+                              setOpenIndexes((prev) =>
+                                prev.includes(index)
+                                  ? prev.filter((i) => i !== index)
+                                  : [...prev, index]
+                              )
+                            }
+                          >
+                            Specifications
+                            <span
+                              className={`arrow ${
+                                openIndexes.includes(index) ? "rotate" : ""
+                              }`}
+                            >
+                              ▼
+                            </span>
+                          </div>
+
+                          {openIndexes.includes(index) && (
+                            <div className="spec-details mt-2">
+                              <div>
+                                <strong>SKU:</strong> {item.productSku}
+                              </div>
+                              {item.size && (
+                                <div>
+                                  <strong>Size:</strong> {item.size}
+                                </div>
+                              )}
+                              <div>
+                                <strong>Metal:</strong> {item.metal}K
+                              </div>
+                              <div>
+                                <strong>Diamond Quality:</strong>{" "}
+                                {item.diamondQuality}
+                              </div>
+                            </div>
+                          )}
+
+                          <div
+                            className="remove-btn"
+                            onClick={() => removeItem(index)}
+                          >
+                            Remove
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="empty-cart-wrapper d-flex flex-column justify-content-center align-items-center text-center mb-5">
@@ -211,14 +209,18 @@ const Cart = () => {
               <div className="flex-grow-1 w-100 d-flex flex-column gap-2">
                 <div className="d-flex justify-content-between text-gray-800-dark">
                   <span>Subtotal ({cartItems.length} Items)</span>
-                  <span>₹{subtotal.toFixed(0)}/-</span>
+                  <span>₹{subtotal.toFixed(2)}/-</span>
+                </div>
+                <div className="d-flex justify-content-between text-gray-800-dark">
+                  <span>GST 3%</span>
+                  <span>₹{gst.toFixed(2)}/-</span>
                 </div>
 
                 <div className="divide my-3"></div>
 
                 <div className="d-flex justify-content-between text-black font-semibold">
                   <h3>Total</h3>
-                  <span>₹{subtotal.toFixed(0)}/-</span>
+                  <span>₹{total.toFixed(2)}/-</span>
                 </div>
 
                 <div className="row m-0 p-0 justify-content-end align-items-center mt-3">

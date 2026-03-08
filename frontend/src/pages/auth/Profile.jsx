@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserProfile, updateUserAddress, updateUserProfile } from "../../api/user.api";
+import Loader from "../../components/common/Loader";
 
 const Profile = () => {
+  const [loading, setLoading] = useState(false);
 
   const [profile, setProfile] = useState({
     firstName: "",
@@ -8,48 +11,103 @@ const Profile = () => {
     email: "",
     phone: "",
     password: "",
-    confirmPassword: ""
+    newPassword: "",
   });
 
   const [shipping, setShipping] = useState({
-    firstName: "",
-    lastName: "",
-    company: "",
-    address: "",
+    receiverName: "",
+    addressLine1: "",
     city: "",
     state: "",
-    zip: "",
-    phone: ""
+    pincode: "",
+    phone: "",
+    country: "",
   });
 
   const handleProfileChange = (e) => {
     setProfile({
       ...profile,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleShippingChange = (e) => {
     setShipping({
       ...shipping,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+
+        const res = await getUserProfile();
+        const user = res.data.user;
+
+        setProfile(user);
+
+        if (user.addresses && user.addresses.length > 0) {
+          setShipping(user.addresses[0]);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
+  const updateProfileHandler = async () => {
+    try {
+      setLoading(true);
+
+      const res = await updateUserProfile(profile);
+      const user = res.data.user;
+
+      setProfile(user);
+
+      if (user.addresses && user.addresses.length > 0) {
+        setShipping(user.addresses[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateAddressHandler = async () => {
+    try {
+      setLoading(true);
+
+      const res = await updateUserAddress(shipping);
+      const address = res.data.address;
+
+      setShipping(address);
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <main>
+      {loading && <Loader />}
+
       <div className="profile-wrapper">
         <div className="container">
           <div className="row justify-content-center">
-
             <div className="col-lg-10">
               <div className="profile-inner">
                 <div className="row gy-3">
-
                   <div className="col-12">
                     <div className="profile-avatar text-center">
                       <label htmlFor="avatar">
-                        <input type="file" className="d-none" id="avatar"/>
+                        <input type="file" className="d-none" id="avatar" />
                         <img
                           src="/assets/img/avatar.png"
                           alt="avatar"
@@ -123,7 +181,6 @@ const Profile = () => {
                         className="form-control bg-transparent"
                         name="password"
                         placeholder="Password"
-                        value={profile.password}
                         onChange={handleProfileChange}
                       />
                       <label>Password</label>
@@ -135,55 +192,60 @@ const Profile = () => {
                       <input
                         type="password"
                         className="form-control bg-transparent"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={profile.confirmPassword}
+                        name="newPassword"
+                        placeholder="New Password"
+                        value={profile.newPassword}
                         onChange={handleProfileChange}
                       />
-                      <label>Confirm Password</label>
+                      <label>New Password</label>
                     </div>
                   </div>
 
                   <div className="col-12 text-center">
-                    <button className="btn primary-btn">
-                      Save Change
-                    </button>
+                    <button className="btn primary-btn" onClick={()=> updateProfileHandler()}>Save Change</button>
                   </div>
-
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
-
       {/* Shipping Address */}
       <div className="pb-5 pt-3">
         <div className="container">
-
           <h4 className="mb-3 text-center">SHIPPING ADDRESS</h4>
 
           <div className="row justify-content-center">
             <div className="col-lg-8">
-
               <div className="row gy-3">
+                <div className="col-md-6">
+                  <div className="form-floating">
+                    <input
+                      className="form-control bg-transparent"
+                      name="receiverName"
+                      placeholder="Receiver Name"
+                      value={shipping.receiverName}
+                      onChange={handleShippingChange}
+                    />
+                    <label>Receiver Name</label>
+                  </div>
+                </div>
 
                 <div className="col-md-6">
                   <div className="form-floating">
                     <input
                       className="form-control bg-transparent"
-                      name="firstName"
-                      placeholder="First Name"
-                      value={shipping.firstName}
+                      name="phone"
+                      placeholder="Phone"
+                      value={shipping.phone}
                       onChange={handleShippingChange}
                     />
-                    <label>First Name</label>
+                    <label>Phone</label>
                   </div>
                 </div>
 
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <div className="form-floating">
                     <input
                       className="form-control bg-transparent"
@@ -194,15 +256,15 @@ const Profile = () => {
                     />
                     <label>Last Name</label>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="col-12">
                   <div className="form-floating">
                     <input
                       className="form-control bg-transparent"
-                      name="address"
+                      name="addressLine1"
                       placeholder="Address"
-                      value={shipping.address}
+                      value={shipping.addressLine1}
                       onChange={handleShippingChange}
                     />
                     <label>Address</label>
@@ -239,12 +301,12 @@ const Profile = () => {
                   <div className="form-floating">
                     <input
                       className="form-control bg-transparent"
-                      name="zip"
-                      placeholder="ZIP"
-                      value={shipping.zip}
+                      name="pincode"
+                      placeholder="PINCODE"
+                      value={shipping.pincode}
                       onChange={handleShippingChange}
                     />
-                    <label>ZIP Code</label>
+                    <label>PINCODE Code</label>
                   </div>
                 </div>
 
@@ -252,29 +314,25 @@ const Profile = () => {
                   <div className="form-floating">
                     <input
                       className="form-control bg-transparent"
-                      name="phone"
-                      placeholder="Phone"
-                      value={shipping.phone}
+                      name="country"
+                      placeholder="Country"
+                      value={shipping.country}
                       onChange={handleShippingChange}
                     />
-                    <label>Phone</label>
+                    <label>Country</label>
                   </div>
                 </div>
 
                 <div className="col-12">
-                  <button className="btn primary-btn w-100">
+                  <button className="btn primary-btn w-100" onClick={()=> updateAddressHandler()}>
                     Save Shipping Address
                   </button>
                 </div>
-
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
-
     </main>
   );
 };

@@ -34,6 +34,12 @@ const Sidebar = () => {
               </span>
               Settings
             </NavLink>
+            <NavLink to="/admin/orders" className="nav-link">
+              <span className="cat-nav-link-icon">
+                <i className="fa-solid fa-gear"></i>
+              </span>
+              Orders 
+            </NavLink>
 
           </div>
         </div>

@@ -312,6 +312,7 @@ const calculatePrice = asyncHandler(async (req, res) => {
             },
             stonePrice: pricingDetails.stonePrice || 0,
             quantity: item.quantity,
+            makingCharges: product.makingCharges,
             size: item.size
         });
     }
@@ -321,7 +322,7 @@ const calculatePrice = asyncHandler(async (req, res) => {
         message: "Price calculated successfully",
         data: {
             items: cartItems,
-            cartTotal
+            cartTotal,
         }
     });
 

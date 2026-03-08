@@ -37,12 +37,6 @@ const AdminLogin = () => {
       if (response.data.emailVerified) {
         navigate("/admin/dashboard");
       } 
-      // else {
-      //   alert(
-      //     "Login Successfull. Your email is not verified. Please verify your email",
-      //   );
-      //   navigate("/email-verification-sent");
-      // }
     } catch (error) {
       setError(
         error.response?.data?.message || "Something went wrong in login",
