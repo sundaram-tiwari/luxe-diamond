@@ -24,6 +24,8 @@ import Setting from "../admin/pages/Settings";
 import OrderSuccess from "../pages/OrderSuccess";
 import Profile from "../pages/auth/Profile";
 import Orders from "../admin/pages/Orders";
+import AddProducts from "../admin/pages/AddProduct";
+import AddCategory from "../admin/pages/AddCategory";
 
 const AppRoutes = () => {
   return (
@@ -86,6 +88,8 @@ const AppRoutes = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Setting />} />
           <Route path="orders" element={<Orders/>} />
+          <Route path="add-product" element={<AddProducts/>} />
+          <Route path="add-category" element={<AddCategory/>} />
         </Route>
       </Route>
 

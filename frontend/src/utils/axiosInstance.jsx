@@ -1,6 +1,5 @@
 import axios from "axios";
 
-//Created a axios instance with url prefix
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api/v1",
   withCredentials: true,
@@ -9,7 +8,6 @@ const axiosInstance = axios.create({
 let isRefreshing = false;
 let failedQueue = [];
 
-//Process all the pending request either resole or reject based on the token response
 const processQueue = (error, token = null) => {
   failedQueue.forEach((req) => {
     if (error) {
@@ -22,8 +20,6 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-
-//Sets token before sendiing any request
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -34,7 +30,6 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-//Verfiy refresh token if the servers send the 401 response 
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {

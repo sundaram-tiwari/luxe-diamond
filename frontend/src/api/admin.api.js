@@ -15,6 +15,16 @@ export const uploadProducts = async (data) => {
     return response.data;
 }
 
+export const addProduct = async (data) => {
+    const response = await adminAxios.post('/product/add-product', data);
+    return response.data;
+}
+
+export const addCategory = async (data) => {
+    const response = await adminAxios.post('/product/add-category', data);
+    return response.data;
+}
+
 export const getAllProducts = async () => {
     const response = await adminAxios.get('/product/get-all-products');
     return response.data;

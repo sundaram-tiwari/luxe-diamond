@@ -10,7 +10,6 @@ const Checkout = () => {
   const [cartTotal, setCartTotal] = useState(0);
 
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
 
   const [billing, setBilling] = useState({
@@ -22,6 +21,10 @@ const Checkout = () => {
     pincode: "",
     phone: "",
   });
+
+  const gstRate = 0.03;
+  const basePrice = cartTotal / (1 + gstRate);
+  const gstAmount = cartTotal - basePrice;
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -39,7 +42,7 @@ const Checkout = () => {
         const res = await getCalculatedPrice(payload);
 
         setPriceData(res.data.items);
-        setCartTotal(res.data.cartTotal);
+        setCartTotal(res.data.cartTotal); // includes GST
       } catch (error) {
         console.log("Price calculation failed", error);
       }
@@ -84,7 +87,7 @@ const Checkout = () => {
 
       localStorage.removeItem("cart");
       alert("Order created successfully");
-      console.log(res.data);
+
       navigate("/order-success", {
         state: {
           order: res.data,
@@ -101,94 +104,32 @@ const Checkout = () => {
   return (
     <div className="bg-light container py-5">
       <div className="row">
+        {/* LEFT SIDE */}
         <div className="col-lg-7 mb-4">
           <h4 className="mb-3">Where should we send your order?</h4>
 
           <div className="bg-white border rounded-3 p-3">
             <div className="row">
-              <div className="col-12 mb-3">
-                <label className="form-label">Receiver Name</label>
-                <input
-                  type="text"
-                  className="form-control bg-light"
-                  name="receiverName"
-                  placeholder="Receiver Name"
-                  value={billing.receiverName}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12 mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  className="form-control bg-light"
-                  name="email"
-                  value={billing.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12 mb-3">
-                <label className="form-label">Address</label>
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="form-control bg-light"
-                  name="address"
-                  value={billing.address}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12 mb-3">
-                <label className="form-label">State</label>
-                <input
-                  type="text"
-                  placeholder="State"
-                  className="form-control bg-light"
-                  name="state"
-                  value={billing.state}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label className="form-label">City</label>
-                <input
-                  type="text"
-                  placeholder="City"
-                  className="form-control bg-light"
-                  name="city"
-                  value={billing.city}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Pincode / ZIP</label>
-                <input
-                  type="text"
-                  placeholder="Pincode"
-                  className="form-control bg-light"
-                  name="pincode"
-                  value={billing.pincode}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="col-12 mb-3">
-                <label className="form-label">Mobile No.</label>
-                <input
-                  type="text"
-                  placeholder="Mobile No."
-                  className="form-control bg-light"
-                  name="phone"
-                  value={billing.phone}
-                  onChange={handleChange}
-                />
-              </div>
+              {[
+                { label: "Receiver Name", name: "receiverName" },
+                { label: "Email", name: "email" },
+                { label: "Address", name: "address" },
+                { label: "State", name: "state" },
+                { label: "City", name: "city" },
+                { label: "Pincode", name: "pincode" },
+                { label: "Mobile No.", name: "phone" },
+              ].map((field, index) => (
+                <div key={index} className="col-12 mb-3">
+                  <label className="form-label">{field.label}</label>
+                  <input
+                    type="text"
+                    className="form-control bg-light"
+                    name={field.name}
+                    value={billing[field.name]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -205,48 +146,40 @@ const Checkout = () => {
           <div className="bg-white border rounded-3 p-3 mb-4 mt-5">
             {priceData.map((item) => {
               const cartItem = cartItems.find(
-                (p) => p.productSku === item.productSku,
+                (p) => p.productSku === item.productSku
               );
+
+              const itemPrice =
+                (item?.metal?.price || 0) +
+                (item?.diamond?.price || 0) +
+                (item?.makingPrice || 999) +
+                (item?.stonePrice || 0);
 
               return (
                 <div key={item.productSku} className="d-flex mb-4">
-                  <div className="cart-image-wrapper position-relative me-3 mt-2">
-                    <div className="cart-image-wrapper">
-                      <img src={cartItem?.image} alt={item.name} />
-                      <div className="item-qty">{item.quantity}</div>
-                    </div>
-                  </div>
+                  <img
+                    src={cartItem?.image}
+                    alt={item.name}
+                    width="70"
+                    className="me-3"
+                  />
 
                   <div className="flex-grow-1">
                     <div className="d-flex justify-content-between">
-                      <span className="fw-medium">{item.name}</span>
+                      <span>{item.name}</span>
                       <span>
-                        ₹{" "}
-                        {(
-                          (item?.metal?.price || 0) +
-                          (item?.diamond?.price || 0) +
-                          (item?.stonePrice || 0)
-                        ).toLocaleString()}
+                        ₹ {itemPrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
 
-                    <div className="small text-muted mt-1">
+                    <div className="small text-muted">
+                      <div>Metal: {item?.metal?.quality}K Gold</div>
+                      <div>Color: {cartItem?.color}</div>
                       <div>
-                        <strong>Metal:</strong> {item?.metal?.quality}K Gold
-                      </div>
-
-                      <div>
-                        <strong>Color:</strong> {cartItem?.color}
-                      </div>
-
-                      <div>
-                        <strong>Diamond Quality:</strong>{" "}
+                        Diamond:{" "}
                         {item?.diamond?.type?.replace("_", " ") || "N/A"}
                       </div>
-
-                      <div>
-                        <strong>Size:</strong> {item.size}
-                      </div>
+                      <div>Size: {item.size}</div>
                     </div>
                   </div>
                 </div>
@@ -256,8 +189,17 @@ const Checkout = () => {
 
           <div className="bg-white border rounded-3 p-3">
             <div className="d-flex justify-content-between mb-2">
-              <span>Cart Subtotal</span>
-              <span>₹ {cartTotal}</span>
+              <span>Subtotal (Excl. GST)</span>
+              <span>
+                ₹ {basePrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+
+            <div className="d-flex justify-content-between mb-2">
+              <span>GST (3%)</span>
+              <span>
+                ₹ {gstAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </span>
             </div>
 
             <div className="d-flex justify-content-between mb-2">
@@ -268,70 +210,10 @@ const Checkout = () => {
             <hr />
 
             <div className="d-flex justify-content-between fw-bold fs-5">
-              <span>Total</span>
-              <span>₹ {cartTotal}</span>
-            </div>
-          </div>
-
-          <div className="row mt-4 text-center">
-            <h5 className="col-12 text-uppercase fw-normal mb-4">
-              LUX DIAMOND PROMISE
-            </h5>
-
-            <div className="col-6 col-sm-3 mb-4">
-              <div className="d-flex flex-column align-items-center">
-                <img
-                  src="/assets/img/promise_1.webp"
-                  alt="Free Shipping"
-                  className="mb-3"
-                  width="60"
-                />
-                <div className="small">
-                  Free Shipping <br /> Pan India
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-sm-3 mb-4">
-              <div className="d-flex flex-column align-items-center">
-                <img
-                  src="/assets/img/promise_3.webp"
-                  alt="Certified Jewellery"
-                  className="mb-3"
-                  width="60"
-                />
-                <div className="small">
-                  100% Certified <br /> Jewellery
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-sm-3 mb-4">
-              <div className="d-flex flex-column align-items-center">
-                <img
-                  src="/assets/img/promise_2.webp"
-                  alt="15 Day Return"
-                  className="mb-3"
-                  width="60"
-                />
-                <div className="small">
-                  Free 15 Day <br /> Return
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-sm-3 mb-4">
-              <div className="d-flex flex-column align-items-center">
-                <img
-                  src="/assets/img/promise_4.webp"
-                  alt="Lifetime Exchange"
-                  className="mb-3"
-                  width="60"
-                />
-                <div className="small">
-                  Lifetime Exchange <br /> & Buybacks
-                </div>
-              </div>
+              <span>Total (Incl. GST)</span>
+              <span>
+                ₹ {cartTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </span>
             </div>
           </div>
         </div>

@@ -28,6 +28,20 @@ const Sidebar = () => {
               Products
             </NavLink>
 
+            <NavLink to="/admin/add-product" className="nav-link">
+              <span className="cat-nav-link-icon">
+                <i className="fa-solid fa-gem"></i>
+              </span>
+              Add product
+            </NavLink>
+
+            <NavLink to="/admin/add-category" className="nav-link">
+              <span className="cat-nav-link-icon">
+                <i className="fa-solid fa-gem"></i>
+              </span>
+              Add Category
+            </NavLink>
+
             <NavLink to="/admin/settings" className="nav-link">
               <span className="cat-nav-link-icon">
                 <i className="fa-solid fa-gear"></i>

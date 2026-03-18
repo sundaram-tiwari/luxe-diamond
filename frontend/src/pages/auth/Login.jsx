@@ -36,7 +36,7 @@ const Login = () => {
       JSON.stringify(response);
       let token = response.data.token;
       localStorage.setItem("token", token);
-      console.log("response log", response.data);
+      // console.log("response log", response.data);
       if (response.data.emailVerified) {
         navigate(from, { replace: true });
       } else {

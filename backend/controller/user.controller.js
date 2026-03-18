@@ -1,3 +1,4 @@
+const Order = require("../models/order.model");
 const User = require("../models/user.model");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { updateUserSchema, updateUserAddressSchema } = require("../zod/user.validation");
@@ -104,4 +105,9 @@ const updateUserAddress = asyncHandler(async (req,res) => {
     })
 });
 
-module.exports = {getAllUsers, getUser, updateUser, updateUserAddress}
+const getYourOrderHistory = asyncHandler(async (req,res) => {
+    const userId = req.user._id;
+    const orders = await Order.find({userId: userId});
+})
+
+module.exports = {getAllUsers, getUser, updateUser, updateUserAddress, getYourOrderHistory}
