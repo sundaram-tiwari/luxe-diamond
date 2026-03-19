@@ -29,6 +29,7 @@ app.use('/api/v1/admin',require('./routes/admin.routes'));
 app.use('/api/v1/product',require('./routes/product.routes'));
 app.use('/api/v1/order',require('./routes/order.routes'));
 app.use('/api/v1/user',require('./routes/user.routes'));
+app.use('/api/v1/category',require('./routes/category.routes'));
 
 app.use((req, res) => {
   res.status(404).json({

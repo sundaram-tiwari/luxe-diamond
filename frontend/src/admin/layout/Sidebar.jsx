@@ -9,16 +9,23 @@ const Sidebar = () => {
 
             <NavLink to="/admin/dashboard" end className="nav-link">
               <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-gauge"></i>
+                <i className="fa-solid fa-tachometer-alt"></i>
               </span>
               Dashboard
             </NavLink>
 
             <NavLink to="/admin/users" className="nav-link">
               <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-users"></i>
+                <i className="fa-solid fa-user"></i>
               </span>
               Users
+            </NavLink>
+
+            <NavLink to="/admin/add-product" className="nav-link">
+              <span className="cat-nav-link-icon">
+                <i className="fa-solid fa-plus-circle"></i>
+              </span>
+              Add Product
             </NavLink>
 
             <NavLink to="/admin/products" className="nav-link">
@@ -28,31 +35,25 @@ const Sidebar = () => {
               Products
             </NavLink>
 
-            <NavLink to="/admin/add-product" className="nav-link">
-              <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-gem"></i>
-              </span>
-              Add product
-            </NavLink>
-
             <NavLink to="/admin/add-category" className="nav-link">
               <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-gem"></i>
+                <i className="fa-solid fa-tags"></i>
               </span>
               Add Category
             </NavLink>
 
             <NavLink to="/admin/settings" className="nav-link">
               <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-gear"></i>
+                <i className="fa-solid fa-cogs"></i>
               </span>
               Settings
             </NavLink>
+
             <NavLink to="/admin/orders" className="nav-link">
               <span className="cat-nav-link-icon">
-                <i className="fa-solid fa-gear"></i>
+                <i className="fa-solid fa-shopping-cart"></i>
               </span>
-              Orders 
+              Orders
             </NavLink>
 
           </div>

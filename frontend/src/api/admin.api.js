@@ -10,6 +10,11 @@ export const getAllUsers = async () => {
     return response.data;
 }
 
+export const getCategories = async () => {
+    const response = await adminAxios.get('/category/get-category');
+    return response.data;
+}
+
 export const uploadProducts = async (data) => {
     const response = await adminAxios.post('/product/upload-product', data);
     return response.data;
