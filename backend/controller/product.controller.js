@@ -145,8 +145,9 @@ const newArrivals = asyncHandler(async (req, res) => {
     };
   });
 
-  const filteredProducts = updatedProducts
-    .filter((product) => product.hasImage);
+  const filteredProducts = updatedProducts.filter(
+    (product) => product.hasImage,
+  );
 
   if (!filteredProducts.length) {
     return res.status(404).json({
@@ -375,33 +376,61 @@ const calculatePrice = asyncHandler(async (req, res) => {
 });
 
 const addSingleProduct = asyncHandler(async (req, res) => {
-  // Build images array from uploaded files
+  console.log("=== ADD PRODUCT REQUEST ===");
+  console.log("req.files exists:", !!req.files);
+  console.log("req.files is array:", Array.isArray(req.files));
+
   const images = [];
-  
   if (req.files && Array.isArray(req.files)) {
-    // Filter files by fieldname since .any() returns array
-    const imageFiles = req.files.filter(file => file.fieldname === 'images');
-    
+    const imageFiles = req.files.filter((file) => file.fieldname === "images");
+    console.log("Image files filtered:", imageFiles.length);
+
     imageFiles.forEach((file) => {
       images.push(`/assets/product/${req.body.productSku}/${file.filename}`);
     });
   }
 
-  // Add images to body for validation
   const bodyWithImages = {
     ...req.body,
     images: images.length > 0 ? images : [],
   };
 
-  const validatedData = addProductSchema.parse(bodyWithImages);
+  try {
+    var validatedData = addProductSchema.parse(bodyWithImages);
+  } catch (err) {
+    console.log("Validation error:", err.message);
+    return res.status(400).json({
+      success: false,
+      errors: err.errors || [{ message: err.message }],
+    });
+  }
 
-  // Handle video file
   if (req.files && Array.isArray(req.files)) {
-    const videoFile = req.files.find(file => file.fieldname === 'video');
+    const videoFile = req.files.find((file) => file.fieldname === "video");
     if (videoFile) {
       validatedData.videoUrl = `/assets/product/${validatedData.productSku}/${videoFile.filename}`;
     }
   }
+
+  // Ensure required fields have defaults if not provided
+  if (!validatedData.defaultColor) {
+    validatedData.defaultColor = "Yellow";
+  }
+  if (!validatedData.color || validatedData.color.length === 0) {
+    validatedData.color = ["Yellow"];
+  }
+  if (!validatedData.quantity || validatedData.quantity <= 0) {
+    validatedData.quantity = 1;
+  }
+
+  console.log("Creating product with data:", {
+    productSku: validatedData.productSku,
+    defaultColor: validatedData.defaultColor,
+    color: validatedData.color,
+    quantity: validatedData.quantity,
+    status: validatedData.status,
+    images: validatedData.images.length,
+  });
 
   const product = await Product.create(validatedData);
 
@@ -441,9 +470,13 @@ const searchProducts = asyncHandler(async (req, res) => {
     });
   }
 
+  console.log(`[searchProducts] Found ${products.length} products before image filtering`);
+
   const updatedProducts = products.map((product) => {
     const imageUrl = generateImageUrl(product);
     const hasImage = imageUrl?.[product.defaultColor]?.length > 0;
+    
+    console.log(`[searchProducts] Product ${product.productSku} - hasImage: ${hasImage}, colors in imageUrl:`, Object.keys(imageUrl));
 
     return {
       ...product,
@@ -456,6 +489,8 @@ const searchProducts = asyncHandler(async (req, res) => {
   const filteredProducts = updatedProducts.filter(
     (product) => product.hasImage,
   );
+
+  console.log(`[searchProducts] After image filtering: ${filteredProducts.length} products remain`);
 
   if (!filteredProducts.length) {
     return res.status(404).json({
@@ -474,6 +509,62 @@ const searchProducts = asyncHandler(async (req, res) => {
   });
 });
 
+const getProductBySku = asyncHandler(async (req, res) => {
+  const { sku } = req.params;
+
+  const product = await Product.findOne({ productSku: sku })
+    .populate("category", "name")
+    .lean();
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
+
+  const imageUrl = generateImageUrl(product);
+  const videoUrl = generateVideoUrl(product);
+
+  res.status(200).json({
+    success: true,
+    message: "Product fetched successfully",
+    data: {
+      product: {
+        ...product,
+        imageUrl,
+        videoUrl,
+      },
+    },
+  });
+});
+
+const updateProductData = asyncHandler(async (req, res) => {
+  const { sku } = req.params;
+  const validatedData = addProductSchema.parse(req.body);
+
+  const updatedProduct = await Product.findOneAndUpdate(
+    { productSku: sku },
+    validatedData,
+    { new: true }
+  ).populate("category", "name");
+
+  if (!updatedProduct) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Product updated successfully",
+    data: {
+      product: updatedProduct,
+    },
+  });
+});
+
 module.exports = {
   uploadProducts,
   getAllProducts,
@@ -486,4 +577,6 @@ module.exports = {
   calculatePrice,
   addSingleProduct,
   searchProducts,
+  getProductBySku,
+  updateProductData,
 };

@@ -185,6 +185,20 @@ const addProductSchema = z.object({
   
   videoUrl: z.string().url("Invalid video URL").optional(),
 
+  defaultColor: z
+    .string()
+    .default("Yellow"),
+
+  color: z
+    .array(z.string())
+    .default(["Yellow"]),
+
+  quantity: z
+    .union([z.number(), z.string()])
+    .transform((val) => (val === "" ? 1 : Number(val)))
+    .refine((val) => !isNaN(val) && val > 0, "Quantity must be greater than 0")
+    .default(1),
+
   isRecommended: z
     .union([z.boolean(), z.string()])
     .transform((val) => val === true || val === "true")

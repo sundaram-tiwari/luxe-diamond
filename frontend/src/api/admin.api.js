@@ -49,3 +49,13 @@ export const getAllOrders = async () => {
     const response = await adminAxios.get('/order/get-all-orders');
     return response.data;
 }
+
+export const getProductBySku = async (sku) => {
+    const response = await adminAxios.get(`/product/get-product/${sku}`);
+    return response.data;
+}
+
+export const updateProduct = async (sku, data) => {
+    const response = await adminAxios.put(`/product/update-product/${sku}`, data);
+    return response.data;
+}

@@ -86,12 +86,8 @@ const ProductCard = ({ product }) => {
 
           <div className="add-to-bag-box">
             <Link
-              to={`/cart`}
+              to={`/product/${product.category?.name}/${product.slug}`}
               className="add-to-bag"
-              onClick={() => {
-                addToCart(product, selectedColor, selectedSize);
-                alert("Added to cart");
-              }}
             >
               Add to Cart
             </Link>

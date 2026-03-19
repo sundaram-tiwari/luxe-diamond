@@ -16,8 +16,37 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
+    const productSku = req.body.productSku?.toUpperCase() || "PRODUCT";
     const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${Date.now()}${ext}`);
+    
+    // Get color code from request body (default to Yellow if not provided)
+    const colorMap = { "yellow": "Y", "rose": "R", "white": "W" };
+    const defaultColor = (req.body.defaultColor || "Yellow").toLowerCase();
+    const colorCode = colorMap[defaultColor] || "Y";
+    
+    // For images, append index; for videos, use color code
+    if (file.fieldname === "images") {
+      // Get existing files in folder to determine index
+      const uploadPath = path.join(
+        __dirname,
+        "../public/assets/product",
+        productSku
+      );
+      
+      if (fs.existsSync(uploadPath)) {
+        const existing = fs.readdirSync(uploadPath)
+          .filter(f => f.startsWith(`${productSku}_${colorCode}`))
+          .length;
+        cb(null, `${productSku}_${colorCode}_${existing + 1}${ext}`);
+      } else {
+        cb(null, `${productSku}_${colorCode}_1${ext}`);
+      }
+    } else if (file.fieldname === "video") {
+      cb(null, `${productSku}_${colorCode}${ext}`);
+    } else {
+      // Fallback for other field names
+      cb(null, `${productSku}_${file.fieldname}${ext}`);
+    }
   },
 });
 

@@ -12,6 +12,8 @@ const {
   deleteProduct,
   addSingleProduct,
   searchProducts,
+  getProductBySku,
+  updateProductData,
 } = require("../controller/product.controller");
 const { verifyJWT } = require("../middleware/auth.middleware");
 const { authorizedRole } = require("../middleware/role.middleware");
@@ -61,6 +63,20 @@ router.post(
   authorizedRole("ADMIN"),
   uploadImageAndVideo,
   addSingleProduct
+);
+
+router.get(
+  "/get-product/:sku",
+  verifyJWT,
+  authorizedRole("ADMIN"),
+  getProductBySku
+);
+
+router.put(
+  "/update-product/:sku",
+  verifyJWT,
+  authorizedRole("ADMIN"),
+  updateProductData
 );
 
 module.exports = router;

@@ -24,10 +24,12 @@ const generateImageUrl = (product) => {
     const result = {};
 
     if (!fs.existsSync(baseFolderPath)) {
+        console.log(`[generateImageUrl] Folder not found: ${baseFolderPath}`);
         return {};
     }
 
     const files = fs.readdirSync(baseFolderPath);
+    console.log(`[generateImageUrl] SKU: ${sku}, defaultColor: ${product.defaultColor}, folder files:`, files);
 
     const getImagesByCode = (code) => {
         return files
@@ -43,6 +45,7 @@ const generateImageUrl = (product) => {
 
     const defaultCode = colorCodeMap[product.defaultColor?.toLowerCase()];
     const defaultImages = defaultCode ? getImagesByCode(defaultCode) : [];
+    console.log(`[generateImageUrl] defaultCode: ${defaultCode}, found images:`, defaultImages.length);
 
     product.color.forEach(color => {
         const code = colorCodeMap[color.toLowerCase()];
