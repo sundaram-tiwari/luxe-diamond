@@ -5,11 +5,13 @@ const {
   getAllProducts,
   getCategory,
   newArrivals,
+  bestSellers,
   getProducts,
   getProductDetails,
   calculatePrice,
   deleteProduct,
   addSingleProduct,
+  searchProducts,
 } = require("../controller/product.controller");
 const { verifyJWT } = require("../middleware/auth.middleware");
 const { authorizedRole } = require("../middleware/role.middleware");
@@ -46,6 +48,10 @@ router.get("/get-products/:category/:productSlug", getProductDetails);
 router.get("/category", getCategory);
 
 router.get("/new-arrivals", newArrivals);
+
+router.get("/best-sellers", bestSellers);
+
+router.get("/search", searchProducts);
 
 router.post("/calculate-price", verifyJWT, calculatePrice);
 

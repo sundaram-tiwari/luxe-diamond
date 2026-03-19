@@ -122,7 +122,7 @@ const newArrivals = asyncHandler(async (req, res) => {
   })
     .populate("category", "name")
     .sort({ createdAt: -1 })
-    .limit(10)
+    .limit(100)
     .lean();
 
   if (!products.length) {
@@ -146,8 +146,7 @@ const newArrivals = asyncHandler(async (req, res) => {
   });
 
   const filteredProducts = updatedProducts
-    .filter((product) => product.hasImage)
-    .slice(0, 4);
+    .filter((product) => product.hasImage);
 
   if (!filteredProducts.length) {
     return res.status(404).json({
@@ -159,6 +158,56 @@ const newArrivals = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Product fetched successfully",
+    data: {
+      products: filteredProducts,
+    },
+  });
+});
+
+const bestSellers = asyncHandler(async (req, res) => {
+  const products = await Product.find({
+    isMostSelling: true,
+    status: true,
+    quantity: { $gt: 0 },
+  })
+    .populate("category", "name")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (!products.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No bestsellers found",
+    });
+  }
+
+  const updatedProducts = products.map((product) => {
+    const imageUrl = generateImageUrl(product);
+
+    const defaultImages = imageUrl?.[product.defaultColor]?.length > 0;
+
+    return {
+      ...product,
+      imageUrl,
+      videoUrl: generateVideoUrl(product),
+      hasImage: defaultImages,
+    };
+  });
+
+  const filteredProducts = updatedProducts.filter(
+    (product) => product.hasImage,
+  );
+
+  if (!filteredProducts.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No bestsellers with images found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Bestsellers fetched successfully",
     data: {
       products: filteredProducts,
     },
@@ -363,14 +412,78 @@ const addSingleProduct = asyncHandler(async (req, res) => {
   });
 });
 
+const searchProducts = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.trim() === "") {
+    return res.status(400).json({
+      success: false,
+      message: "Search query is required",
+    });
+  }
+
+  const products = await Product.find({
+    $or: [
+      { name: { $regex: query, $options: "i" } },
+      { productSku: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } },
+    ],
+    status: true,
+    quantity: { $gt: 0 },
+  })
+    .populate("category", "name")
+    .lean();
+
+  if (!products.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No products found matching your search",
+    });
+  }
+
+  const updatedProducts = products.map((product) => {
+    const imageUrl = generateImageUrl(product);
+    const hasImage = imageUrl?.[product.defaultColor]?.length > 0;
+
+    return {
+      ...product,
+      imageUrl,
+      videoUrl: generateVideoUrl(product),
+      hasImage,
+    };
+  });
+
+  const filteredProducts = updatedProducts.filter(
+    (product) => product.hasImage,
+  );
+
+  if (!filteredProducts.length) {
+    return res.status(404).json({
+      success: false,
+      message: "No products with images found matching your search",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Products found successfully",
+    data: {
+      products: filteredProducts,
+      count: filteredProducts.length,
+    },
+  });
+});
+
 module.exports = {
   uploadProducts,
   getAllProducts,
   deleteProduct,
   getCategory,
   newArrivals,
+  bestSellers,
   getProducts,
   getProductDetails,
   calculatePrice,
   addSingleProduct,
+  searchProducts,
 };

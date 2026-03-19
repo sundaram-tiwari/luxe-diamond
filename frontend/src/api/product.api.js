@@ -10,6 +10,11 @@ export const getNewArrivals = async () => {
     return response.data;
 }
 
+export const getBestSellers = async () => {
+    const response = await axiosInstance.get('/product/best-sellers');
+    return response.data;
+}
+
 export const getProducts = async (category) => {
     const response = await axiosInstance.get(`/product/get-products/${category}`,);
     return response.data;
@@ -27,5 +32,10 @@ export const getCalculatedPrice = async (data) => {
 
 export const getSettings = async () => {
     const response = await axiosInstance.get('/admin/settings');
+    return response.data;
+}
+
+export const searchProducts = async (query) => {
+    const response = await axiosInstance.get(`/product/search?query=${encodeURIComponent(query)}`);
     return response.data;
 }

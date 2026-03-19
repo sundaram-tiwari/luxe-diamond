@@ -9,6 +9,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import Products from "../pages/products/Products";
 import ProductDetails from "../pages/products/ProductDetails";
+import SearchResults from "../pages/SearchResults";
 import NotFound from "../pages/NotFound";
 
 // Admin
@@ -64,6 +65,7 @@ const AppRoutes = () => {
           path="/product/:category/:productSlug"
           element={<ProductDetails />}
         />
+        <Route path="/search" element={<SearchResults />} />
       </Route>
 
       {/* Auth routes */}

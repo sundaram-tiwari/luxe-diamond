@@ -1,21 +1,36 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { getCart } from "../../utils/cart";
+import { Modal } from "bootstrap";
 
 const Header = () => {
   const [cartItems] = useState(() => getCart());
+  const [searchQuery, setSearchQuery] = useState("");
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [token] = useState(() => {
     return localStorage.getItem("token");
   });
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem("token");
-  //   setToken(null);
-  //   navigate("/");
-  // };
+  const handleSearchIcon = () => {
+    const searchModal = new Modal(document.getElementById("searchModal"));
+    searchModal.show();
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Close modal
+      const searchModalElement = document.getElementById("searchModal");
+      const searchModal = Modal.getInstance(searchModalElement);
+      searchModal.hide();
+      
+      // Navigate to search results
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="main-header bg-white position-sticky top-0 shadow-sm">
@@ -34,14 +49,16 @@ const Header = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
-              <form action="#" className="product-search">
+              <form onSubmit={handleSearchSubmit} className="product-search">
                 <div className="input-group">
                   <input
                     type="search"
                     className="form-control"
                     placeholder="Search products…"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                  <button type="button" className="btn" data-bs-dismiss="modal">
+                  <button type="submit" className="btn">
                     <i className="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
@@ -132,7 +149,10 @@ const Header = () => {
             <div className="col-lg-4 col-md-6 text-end">
               <ul className="d-flex justify-content-end align-items-center list-unstyled mb-0 gap-4">
                 <li>
-                  <i className="fa-solid fa-magnifying-glass cursor-pointer"></i>
+                  <i 
+                    className="fa-solid fa-magnifying-glass cursor-pointer" 
+                    onClick={handleSearchIcon}
+                  ></i>
                 </li>
                 <li>
                   <Link to="/cart" className="cart-icon-wrapper">
